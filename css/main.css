@@ -4,7 +4,7 @@ body {
     font-family: 'Lato', serif;
 	color: #fff;
 	margin: 0;
-    background-color: #878fb5;
+    background-color: #50576f;
 }
 h1 {
 	font-size: 64px;
@@ -96,7 +96,7 @@ ul {
 	padding-top: 160px;
 	padding-bottom: 160px;
 	background-color: #090f33;
-    background-image: url(../images/65C688D1-68D1-4E32-B361-CF60B8E003D7_1_201_a.jpeg);
+    background-image: url(../images/header.png);
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-size: cover;
