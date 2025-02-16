@@ -14,7 +14,7 @@ body {
 h1 {
 	font-size: 180px;
 	font-weight: 300;
-	line-height: 200px;
+	line-height: 1px;
 	margin-bottom: 0;
   color: #090f33;
   text-align: center;
@@ -32,7 +32,7 @@ h1 {
 h2 {
   font-size: 40px;
 	font-weight: 300;
-	line-height: 200px;
+	line-height: 400px;
 	margin-bottom: 0;
   color: #090f33;
   text-align: center;
@@ -45,9 +45,20 @@ h2 {
             }
 }
 h3 {
-    font-size: 22px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
+  font-size: 20px;
+	font-weight: 300;
+  margin-top: 150px;
+	line-height: 0px;
+	margin-bottom: 0;
+  color: #090f33;
+  text-align: center;
+  opacity: 0;
+            animation: fadeIn 7s forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
 }
 p {
 	margin-bottom: 30px;
