@@ -18,9 +18,16 @@ h1 {
 	margin-bottom: 0;
   color: #090f33;
   text-align: center;
-  
-  
+  opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
 }
+  
+
 
 h2 {
   font-size: 40px;
@@ -29,6 +36,13 @@ h2 {
 	margin-bottom: 0;
   color: #090f33;
   text-align: center;
+  opacity: 0;
+            animation: fadeIn 7s forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
 }
 h3 {
     font-size: 22px;
