@@ -1,12 +1,12 @@
 
-.hero {
+.fronter {
 	color: rgb(0, 0, 0)000;
 	text-align: center;
-	margin-bottom: 20px;
-	padding-top: 160px;
-	padding-bottom: 160px;
+	margin-bottom: 10px;
+	padding-top: 10px;
+	padding-bottom: 30px;
 	background-color: #ffffff;
-  
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -73,8 +73,7 @@ footer {
 	font-size: 14px;
 	background-color: #413e3e;
 	width: 100%;
-	padding: 15px;
-  
+	padding: 9px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -88,6 +87,7 @@ footer {
 	border-radius: 4px;
 	text-transform: uppercase;
 	text-decoration: none;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 .page {
     background-color: #ffffff;
@@ -99,11 +99,13 @@ footer {
     border-radius: 4px;
     text-transform: uppercase;
     text-decoration: none;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
     
 }
 nav {
 	text-align: center;
 	margin: 40px;
+  
 }
 
 ul {
@@ -122,6 +124,7 @@ ul {
 }
 .social {
 	float: right;
+
 }
 
 .left {
