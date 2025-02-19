@@ -11,8 +11,9 @@ body {
     font-family: 'Lato', serif;
 	color: #fff;
     background-color: #ffffff;
-    overflow: hidden; /* Prevents unwanted horizontal scrolling */
+    
     margin: 0;
+    
 }
 h1 {
 	font-size: 180px;
@@ -73,4 +74,38 @@ p {
 a:link, a:active,a:visited {
     color: #ddd;
     text-decoration: none;
+}
+.carousel-container {
+  position: relative;
+  width: 600px; /* Adjust size */
+  height: 337.55px;
+  margin: 50px auto;
+  overflow: hidden;
+  
+}
+
+.carousel {
+  display: flex;
+  width: 400%;
+  animation: slide 20s infinite; /* Rotates all 4 images */
+}
+
+.carousel {
+  width: 100%;  /* Ensures images fill the container */
+  height: 100%;
+  object-fit: cover; /* Makes sure the images don’t stretch */
+  object-position: center; /* Ensures the center is visible */
+}
+ 
+
+
+
+
+/* Keyframes for sliding effect */
+@keyframes slide {
+  0% { transform: translateX(0%); }
+  25% { transform: translateX(-100%); }
+  50% { transform: translateX(-200%); }
+  75% { transform: translateX(-300%); }
+  100% { transform: translateX(0%); }
 }

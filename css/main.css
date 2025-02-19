@@ -18,6 +18,7 @@
   width: 50%;
 }
 body {
+  
     font-family: 'Lato', serif;
 	
 	margin: 0;
@@ -73,6 +74,8 @@ footer {
 	background-color: #413e3e;
 	width: 100%;
 	padding: 15px;
+  
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .button {
@@ -318,95 +321,36 @@ ul {
   * {box-sizing:border-box}
 
   /* Slideshow container */
-  .slideshow-container {
-    max-width: 600px;
-    height: 200pxpx;
+  
+
+.carousel-container {
     position: relative;
-    margin: auto;
-  }
+    width: 600px; /* Adjust size */
+    height: 400px; /* Ensures consistent height */
+    margin: 50px auto;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.carousel {
+    display: flex;
+    width: 400%;
+    animation: slide 12s infinite;
+}
+
+.carousel img {
+    width: 600px;
   
-  /* Hide the images by default */
-  .mySlides {
-    display: none;
-  }
-  
-  /* Next & previous buttons */
-  .prev, .next {
-    cursor: pointer;
-    position: absolute;
-    top: 50%;
-    width: auto;
-    margin-top: -22px;
-    padding: 16px;
-    color: rgba(255, 255, 255, 0);
-    font-weight: bold;
-    font-size: 1px;
-    transition: 0.6s ease;
-    border-radius: 0 3px 3px 0;
-    user-select: none;
-  }
-  
-  /* Position the "next button" to the right */
-  .next {
-    right: 0;
-    border-radius: 3px 0 0 3px;
-  }
-  
-  /* On hover, add a black background color with a little bit see-through */
-  .prev:hover, .next:hover {
-    background-color: rgba(0, 0, 0, 0);
-  }
-  
-  /* Caption text */
-  .text {
-    color: #000000;
-    font-size: 15px;
-    padding: 8px 12px;
-    position: absolute;
-    bottom: 8px;
-    width: 100%;
-    text-align: center;
-  }
-  
-  /* Number text (1/3 etc) */
-  .numbertext {
-    color: #000000;
-    font-size: 12px;
-    padding: 8px 12px;
-    position: absolute;
-    top: 0;
-  }
-  
-  /* The dots/bullets/indicators */
-  .dot{
-    cursor: pointer;
-    height: 15px;
-    width: 15px;
-    margin: 0 2px;
-    background-color: #bbb;
-    border-radius: 50%;
-    display: inline-block;
-    transition: background-color 0.6s ease;
-  }
-  .ondot{
-    cursor: pointer;
-    height: 15px;
-    width: 15px;
-    margin: 0 2px;
-    background-color: #373737;
-    border-radius: 50%;
-    display: inline-block;
-    transition: background-color 0.6s ease;
-  }
-  
-  
-  /* Fading animation */
-  .fade {
-    animation-name: fade;
-    animation-duration: 3s;
-  }
-  
-  @keyframes fade {
-    from {opacity: .4}
-    to {opacity: 1}
-  }
+    object-fit: cover;  /* Ensures the image fills the container without stretching */
+    object-position: center;  /* Centers the image */
+}
+
+/* Keyframes for sliding effect */
+@keyframes slide {
+    0% { transform: translateX(0px); }
+    25% { transform: translateX(-600px); }
+    50% { transform: translateX(-1200px); }
+    75% { transform: translateX(-1800px); }
+    100% { transform: translateX(0px); }
+}
