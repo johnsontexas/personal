@@ -1,111 +1,166 @@
-.Jesus {
-  width: 300px;
-  
+:root {
+  --primary-color: #090f33;
+  --text-color: #090f33;
+  --background-color: #ffffff;
+  --animation-timing: 1s;
 }
-#delayedImage {
-  display: none; /* Hide image initially */
-  
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: 'Lato', serif;
-	color: #fff;
-    background-color: #ffffff;
-    
-    margin: 0;
-    
+  font-family: 'Lato', serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
+  text-align: center;
+}
+
+.welcome-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 h1 {
-	font-size: 180px;
-	font-weight: 300;
-	line-height: 1px;
-	margin-bottom: 0;
-  color: #090f33;
+  font-size: clamp(60px, 15vw, 180px);
+  font-weight: 300;
+  line-height: 1;
+  margin: 0;
+  color: var(--primary-color);
   text-align: center;
   opacity: 0;
-            animation: fadeIn 1s forwards;
-        }
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
+  animation: fadeIn var(--animation-timing) forwards;
 }
-  
-
 
 h2 {
-  font-size: 40px;
-	font-weight: 300;
-	margin-top: 200px;
-	margin-bottom: 0;
-  color: #090f33;
+  font-size: clamp(20px, 4vw, 40px);
+  font-weight: 300;
+  margin: 20px 0;
+  color: var(--primary-color);
   text-align: center;
   opacity: 0;
-            animation: fadeIn 7s forwards;
-        }
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
+  animation: fadeIn var(--animation-timing) 2s forwards;
 }
+
 h3 {
-  font-size: 20px;
-	font-weight: 300;
-  margin-top: 150px;
-	line-height: 0px;
-	margin-bottom: 0;
-  color: #090f33;
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 300;
+  margin: 20px 0;
+  line-height: 1;
+  color: var(--primary-color);
   text-align: center;
   opacity: 0;
-            animation: fadeIn 7s forwards;
-        }
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
-}
-p {
-	margin-bottom: 30px;
-	line-height: 30px;
-  
+  animation: fadeIn var(--animation-timing) 1s forwards;
 }
 
-
-a:link, a:active,a:visited {
-    color: #ddd;
-    text-decoration: none;
+.Jesus {
+  width: min(300px, 80%);
+  margin: 20px auto;
+  display: block;
 }
+
+#delayedImage {
+  display: none;
+}
+
 .carousel-container {
   position: relative;
-  width: 600px; /* Adjust size */
-  height: 337.55px;
-  margin: 50px auto;
+  width: min(600px, 90%);
+  height: auto;
+  margin: -20px auto 30px;
   overflow: hidden;
-  
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .carousel {
   display: flex;
   width: 400%;
-  animation: slide 20s infinite; /* Rotates all 4 images */
-}
-
-.carousel {
-  width: 100%;  /* Ensures images fill the container */
   height: 100%;
-  object-fit: cover; /* Makes sure the images don’t stretch */
-  object-position: center; /* Ensures the center is visible */
+  animation: slide 20s infinite linear;
 }
- 
 
+.carousel img {
+  width: 25%;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  flex-shrink: 0;
+  border: none;
+}
 
+@keyframes fadeIn {
+  to {
+      opacity: 1;
+  }
+}
 
-
-/* Keyframes for sliding effect */
 @keyframes slide {
-  0% { transform: translateX(0%); }
-  25% { transform: translateX(-100%); }
-  50% { transform: translateX(-200%); }
-  75% { transform: translateX(-300%); }
-  100% { transform: translateX(0%); }
+  0% { transform: translateX(0); }
+  20% { transform: translateX(0); }
+  25% { transform: translateX(-25%); }
+  45% { transform: translateX(-25%); }
+  50% { transform: translateX(-50%); }
+  70% { transform: translateX(-50%); }
+  75% { transform: translateX(-75%); }
+  95% { transform: translateX(-75%); }
+  100% { transform: translateX(0); }
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+  .container {
+      padding: 15px;
+  }
+
+  .carousel-container {
+      margin: -15px auto 20px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .container {
+      padding: 10px;
+  }
+
+  h1 {
+      font-size: clamp(40px, 12vw, 60px);
+  }
+
+  h2 {
+      font-size: clamp(18px, 3vw, 20px);
+  }
+
+  h3 {
+      font-size: clamp(14px, 1.8vw, 16px);
+  }
+
+  .carousel-container {
+      margin: -10px auto 15px;
+  }
+}
+
+p {
+margin-bottom: 30px;
+line-height: 30px;
+
+}
+
+
+a:link, a:active,a:visited {
+  color: #ddd;
+  text-decoration: none;
 }
