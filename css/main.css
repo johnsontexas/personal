@@ -1,6 +1,6 @@
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   padding: 20px;
   justify-items: center;
@@ -16,11 +16,10 @@
   object-fit: cover;
 }
 .fronter {
-	color: rgb(0, 0, 0)000;
+	color: rgb(0, 0, 0);
 	text-align: center;
 	margin-bottom: 10px;
-	padding-top: 10px;
-	padding-bottom: 30px;
+	padding: 20px 10px;
 	background-color: #ffffff;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 	background-position: center center;
@@ -28,11 +27,10 @@
 	background-size: cover;
 }
 .fronter2 {
-	color: rgb(0, 0, 0)000;
+	color: rgb(0, 0, 0);
 	text-align: center;
 	margin-bottom: 10px;
-	padding-top: 1px;
-	padding-bottom: 2px;
+	padding: 20px 10px;
 	background-color: #ffffff;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 	background-position: center center;
@@ -54,28 +52,31 @@ body {
     background-color: #dedede;
 }
 h1 {
-	font-size: 100px;
+	font-size: clamp(40px, 8vw, 100px);
 	font-weight: 300;
 	
 	margin-bottom: 0;
 }
 h2 {
-   font-size: 40px;
+   font-size: clamp(24px, 4vw, 40px);
    font-weight: 300;
    text-transform: uppercase;
 }
 h3 {
-    font-size: 22px;
+    font-size: clamp(18px, 2.5vw, 22px);
     font-weight: 300;
    text-transform: uppercase;
 }
 p {
 	margin-bottom: 30px;
-	line-height: 30px;
+	line-height: 1.6;
   color: #000000;
+  font-size: clamp(14px, 2vw, 16px);
 }
 img {
 	border: 0;
+  max-width: 100%;
+  height: auto;
 }
 
 a:link, a:active,a:visited {
@@ -88,53 +89,57 @@ a:hover {
 }
 
 main {
-	width: 70%;
+	width: 90%;
+	max-width: 1200px;
 	display: block;
 	margin-right: auto;
 	margin-left: auto;
+	padding: 0 15px;
 }
 footer {
 	color: #fff;
 	position: relative;
-	height: 65px;
+	min-height: 65px;
 	left: 0;
 	bottom: 0;
 	font-size: 14px;
 	background-color: #413e3e;
 	width: 100%;
-	padding: 9px;
+	padding: 15px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .button {
 	background-color: #282828;
-	padding-top: 6px;
-	padding-right: 12px;
-	padding-bottom: 6px;
-	padding-left: 12px;
+	padding: 8px 12px;
 	color: #fff;
 	border-radius: 4px;
 	text-transform: uppercase;
 	text-decoration: none;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  display: inline-block;
+  margin: 5px;
+  font-size: clamp(12px, 1.5vw, 14px);
 }
 .page {
     background-color: #ffffff;
     color: #090f33;
-    padding-top: 6px;
-    padding-right: 12px;
-    padding-bottom: 6px;
-    padding-left: 12px;
+    padding: 8px 12px;
     border-radius: 4px;
     text-transform: uppercase;
     text-decoration: none;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-    
+    display: inline-block;
+    margin: 5px;
+    font-size: clamp(12px, 1.5vw, 14px);
 }
 nav {
 	text-align: center;
-	margin: 40px;
-  
+	margin: 20px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 
 ul {
@@ -149,11 +154,23 @@ ul {
 	margin-right: auto;
 	margin-left: auto;
 	min-width: 320px;
-  line-height: 75px;
+  padding: 0 15px;
 }
 .social {
-	float: right;
+	display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
 
+.social img {
+  width: 36px;
+  height: 36px;
+  transition: transform 0.2s;
+}
+
+.social img:hover {
+  transform: scale(1.1);
 }
 
 .left {
@@ -261,91 +278,113 @@ ul {
 }
 
 
-@media screen and (max-width: 600px) {
- 
-  .timeline::after {
-    left: 31px;
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 0 10px;
   }
   
-  
-  .tlcontainer {
-    width: 100%;
-    padding-left: 70px;
-    padding-right: 25px;
+  nav {
+    margin: 15px 5px;
   }
   
-  
-  .tlcontainer::before {
-    left: 60px;
-    border: medium solid white;
-    border-width: 10px 10px 10px 0;
-    border-color: transparent white transparent transparent;
+  .button, .page {
+    padding: 6px 10px;
   }
+  
+  main {
+    width: 95%;
+  }
+  
+  .gallery {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 15px;
+  }
+}
 
-  
-  .tlleft::after, .tlright::after {
-    left: 15px;
+@media screen and (max-width: 480px) {
+  h1 {
+    font-size: clamp(32px, 6vw, 60px);
   }
   
+  h2 {
+    font-size: clamp(20px, 3vw, 30px);
+  }
   
-  .tlright {
-    left: 0%;
-  }}
-  .lato-thin {
+  h3 {
+    font-size: clamp(16px, 2vw, 20px);
+  }
+  
+  .button, .page {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+  
+  .social img {
+    width: 30px;
+    height: 30px;
+  }
+  
+  footer {
+    padding: 10px;
+  }
+}
+
+.lato-thin {
     font-family: "Lato", serif;
     font-weight: 100;
     font-style: normal;
   }
   
-  .lato-light {
+.lato-light {
     font-family: "Lato", serif;
     font-weight: 300;
     font-style: normal;
   }
   
-  .lato-regular {
+.lato-regular {
     font-family: "Lato", serif;
     font-weight: 400;
     font-style: normal;
   }
   
-  .lato-bold {
+.lato-bold {
     font-family: "Lato", serif;
     font-weight: 700;
     font-style: normal;
   }
   
-  .lato-black {
+.lato-black {
     font-family: "Lato", serif;
     font-weight: 900;
     font-style: normal;
   }
   
-  .lato-thin-italic {
+.lato-thin-italic {
     font-family: "Lato", serif;
     font-weight: 100;
     font-style: italic;
   }
   
-  .lato-light-italic {
+.lato-light-italic {
     font-family: "Lato", serif;
     font-weight: 300;
     font-style: italic;
   }
   
-  .lato-regular-italic {
+.lato-regular-italic {
     font-family: "Lato", serif;
     font-weight: 400;
     font-style: italic;
   }
   
-  .lato-bold-italic {
+.lato-bold-italic {
     font-family: "Lato", serif;
     font-weight: 700;
     font-style: italic;
   }
   
-  .lato-black-italic {
+.lato-black-italic {
     font-family: "Lato", serif;
     font-weight: 900;
     font-style: italic;
@@ -356,33 +395,32 @@ ul {
   
 
 .carousel-container {
-    position: relative;
-    width: 600px; /* Adjust size */
-    height: 400px; /* Ensures consistent height */
-    margin: 50px auto;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
     overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
 
 .carousel {
     display: flex;
-    width: 400%;
-    animation: slide 12s infinite;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
 }
 
 .carousel img {
-    width: 600px;
-  
-    object-fit: cover;  /* Ensures the image fills the container without stretching */
-    object-position: center;  /* Centers the image */
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
-/* Keyframes for sliding effect */
+/* Animation for carousel */
 @keyframes slide {
-    0% { transform: translateX(0px); }
-    25% { transform: translateX(-600px); }
-    50% { transform: translateX(-1200px); }
-    75% { transform: translateX(-1800px); }
-    100% { transform: translateX(0px); }
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
