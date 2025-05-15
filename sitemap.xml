@@ -19,7 +19,7 @@
     <loc>https://johnsontexas.com/about</loc>
     <lastmod>2025-05-12</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
 
   <url>
@@ -47,7 +47,7 @@
     <loc>https://johnsontexas.com/contact</loc>
     <lastmod>2025-05-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.6</priority>
   </url>
 
 
