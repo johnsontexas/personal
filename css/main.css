@@ -1,13 +1,13 @@
 :root {
   --primary-color: #2c3e50;    /* Deep blue-gray */
-  --secondary-color: #3498db;  /* Bright blue */
-  --accent-color: #e74c3c;     /* Coral red */
+  --secondary-color: #34495e;  /* Darker blue-gray */
+  --accent-color: #7f8c8d;     /* Medium gray */
   --text-color: #2c3e50;       /* Dark blue-gray */
   --light-text: #ecf0f1;       /* Light gray */
   --background: #f5f6fa;       /* Light gray-blue */
   --card-bg: #ffffff;          /* White */
-  --shadow: rgba(0, 0, 0, 0.1);
-  --hover-color: #2980b9;      /* Darker blue */
+  --shadow: rgba(0, 0, 0, 0.08);
+  --hover-color: #2c3e50;      /* Dark blue-gray */
 }
 
 .gallery {
@@ -22,7 +22,7 @@
   width: 100%;
   max-width: 400px;
   max-height: 300px;
-  border: 3px solid var(--secondary-color);
+  border: 3px solid var(--accent-color);
   border-radius: 10px;
   box-shadow: 0 4px 12px var(--shadow);
   object-fit: cover;
@@ -52,7 +52,7 @@
 
 .fronter h2 {
   font-weight: 400;
-  color: var(--secondary-color);
+  color: var(--accent-color);
   letter-spacing: 1px;
 }
 
@@ -153,7 +153,7 @@ footer {
   left: 0;
   bottom: 0;
   font-size: 14px;
-  background-color: var(--primary-color);
+  background-color: var(--secondary-color);
   width: 100%;
   padding: 1.5rem 15px;
   box-shadow: 0 -2px 4px var(--shadow);
@@ -161,7 +161,7 @@ footer {
 }
 
 .button {
-  background-color: var(--primary-color);
+  background-color: var(--secondary-color);
   padding: 10px 16px;
   color: var(--light-text);
   border-radius: 6px;
@@ -183,7 +183,7 @@ footer {
 }
 
 .page {
-  background-color: var(--secondary-color);
+  background-color: var(--accent-color);
   color: var(--light-text);
   padding: 10px 16px;
   border-radius: 6px;
