@@ -36,13 +36,24 @@
 .fronter {
   color: var(--text-color);
   text-align: center;
-  margin-bottom: 10px;
-  padding: 20px 10px;
+  margin-bottom: 2rem;
+  padding: 3rem 10px;
   background-color: var(--card-bg);
-  box-shadow: 0px 4px 10px var(--shadow);
+  box-shadow: 0 2px 4px var(--shadow);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.fronter h1 {
+  margin-bottom: 1rem;
+  letter-spacing: -1px;
+}
+
+.fronter h2 {
+  font-weight: 400;
+  color: var(--secondary-color);
+  letter-spacing: 1px;
 }
 
 .fronter2 {
@@ -120,9 +131,19 @@ main {
   width: 90%;
   max-width: 1200px;
   display: block;
-  margin-right: auto;
-  margin-left: auto;
+  margin: 2rem auto;
   padding: 0 15px;
+}
+
+main p {
+  margin-bottom: 30px;
+  line-height: 1.8;
+  color: var(--text-color);
+  font-size: clamp(16px, 2vw, 18px);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 footer {
@@ -134,46 +155,53 @@ footer {
   font-size: 14px;
   background-color: var(--primary-color);
   width: 100%;
-  padding: 15px;
-  box-shadow: 0px 4px 10px var(--shadow);
+  padding: 1.5rem 15px;
+  box-shadow: 0 -2px 4px var(--shadow);
+  margin-top: 3rem;
 }
 
 .button {
   background-color: var(--primary-color);
-  padding: 8px 12px;
+  padding: 10px 16px;
   color: var(--light-text);
-  border-radius: 4px;
+  border-radius: 6px;
   text-transform: uppercase;
   text-decoration: none;
-  box-shadow: 0px 4px 10px var(--shadow);
+  box-shadow: 0 2px 4px var(--shadow);
   display: inline-block;
   margin: 5px;
   font-size: clamp(12px, 1.5vw, 14px);
   transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  font-weight: 500;
 }
 
 .button:hover {
   background-color: var(--hover-color);
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow);
 }
 
 .page {
   background-color: var(--secondary-color);
   color: var(--light-text);
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: 10px 16px;
+  border-radius: 6px;
   text-transform: uppercase;
   text-decoration: none;
-  box-shadow: 0px 4px 10px var(--shadow);
+  box-shadow: 0 2px 4px var(--shadow);
   display: inline-block;
   margin: 5px;
   font-size: clamp(12px, 1.5vw, 14px);
   transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  font-weight: 500;
 }
 
 .page:hover {
   background-color: var(--hover-color);
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow);
 }
 
 nav {
@@ -196,20 +224,20 @@ nav {
 .social {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 20px;
   flex-wrap: wrap;
 }
 
 .social img {
-  width: 36px;
-  height: 36px;
-  transition: transform 0.3s ease;
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease;
   filter: brightness(0) invert(1);
   opacity: 0.8;
 }
 
 .social img:hover {
-  transform: scale(1.1);
+  transform: scale(1.1) translateY(-2px);
   opacity: 1;
 }
 
@@ -225,11 +253,18 @@ nav {
 
 .carousel {
   width: 100%;
+  position: relative;
+  height: 400px;
 }
 
 .mySlides {
   display: none;
   width: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .mySlides img {
@@ -237,10 +272,6 @@ nav {
   height: 400px;
   object-fit: cover;
   border-radius: 0 0 10px 10px;
-}
-
-.mySlides img.lower-position {
-  object-position: center 70%;
 }
 
 /* Dots/bullets/indicators */
