@@ -378,7 +378,8 @@ nav {
 
 .project-item img {
     max-width: 100%;
-    height: auto;
+    height: 300px;
+    object-fit: contain;
     margin: 1rem 0;
 }
 
