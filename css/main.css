@@ -12,25 +12,30 @@
 
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  padding: 40px 20px;
   justify-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .gallery img {
   width: 100%;
-  max-width: 400px;
-  max-height: 300px;
-  border: 3px solid var(--accent-color);
-  border-radius: 10px;
-  box-shadow: 0 4px 12px var(--shadow);
+  max-width: 450px;
+  height: 350px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px var(--shadow);
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  background-color: var(--card-bg);
 }
 
 .gallery img:hover {
-  transform: scale(1.02);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px var(--shadow);
 }
 
 .fronter {
@@ -420,39 +425,60 @@ nav {
 * {box-sizing:border-box}
 
 .project-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
-    gap: 2rem;
-    padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 40px;
+  padding: 40px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .project-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: var(--card-bg);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--shadow);
+  transition: all 0.4s ease;
+}
+
+.project-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px var(--shadow);
 }
 
 .project-item img {
-    max-width: 100%;
-    height: 300px;
-    object-fit: contain;
-    margin: 1rem 0;
+  max-width: 100%;
+  height: 350px;
+  object-fit: contain;
+  margin: 1rem 0;
+  border-radius: 8px;
+  background-color: var(--background);
 }
 
 .project-item h3 {
-    margin-bottom: 1rem;
+  margin: 1.5rem 0 1rem;
+  color: var(--primary-color);
+  font-size: 1.4rem;
 }
 
 .project-item p {
-    max-width: 600px;
+  max-width: 600px;
+  color: var(--text-color);
+  line-height: 1.8;
+  margin: 0 auto;
 }
 
 .project-item p a {
-    color: #3498db !important;
-    text-decoration: underline !important;
+  color: var(--accent-color) !important;
+  text-decoration: none !important;
+  transition: color 0.3s ease;
+  font-weight: 500;
 }
 
 .project-item p a:hover {
-    color: #2980b9 !important;
+  color: var(--primary-color) !important;
 }
