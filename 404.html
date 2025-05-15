@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page Not Found</title>
+    <meta http-equiv="refresh" content="0;url=index.html">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f5f5f5;
+        }
+        .message {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        // Immediate redirect
+        window.location.replace("index.html");
+    </script>
+</head>
+<body>
+    <div class="message">
+        <h1>Page Not Found</h1>
+        <p>The page you're looking for doesn't exist.</p>
+        <p>You will be redirected to the homepage in a moment...</p>
+        <p>If you are not redirected automatically, <a href="index.html">click here to go to the homepage</a>.</p>
+    </div>
+</body>
+</html> 
