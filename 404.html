@@ -2,43 +2,60 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Page Not Found</title>
+    <title>Page Not Found - Daniel A. Johnson</title>
     <meta http-equiv="refresh" content="3;url=index.html">
+    <link rel="icon" type="image/x-icon" href="images/Ihs-logo.svg.ico">
+    <link rel="icon" type="image/png" href="images/Ihs-logo.svg.png">
+    <link rel="apple-touch-icon" href="images/Ihs-logo.svg.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        .error-container {
             text-align: center;
-            padding: 50px;
-            background-color: #f5f5f5;
-        }
-        .message {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            max-width: 500px;
+            padding: 50px 20px;
+            max-width: 800px;
             margin: 0 auto;
         }
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
+        .error-message {
+            background-color: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
         }
         #countdown {
             font-weight: bold;
-            color: #007bff;
+            color: var(--secondary-color);
+        }
+        .error-message a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .error-message a:hover {
+            color: var(--primary-color);
         }
     </style>
 </head>
 <body>
-    <div class="message">
-        <h1>Page Not Found</h1>
-        <p>The page you're looking for doesn't exist.</p>
-        <p>Redirecting to homepage in <span id="countdown">3</span> seconds...</p>
-        <p>If you are not redirected automatically, <a href="index.html">click here to go to the homepage</a>.</p>
+   
+    <div class="container">
+       
+
+        <div class="error-container">
+            <div class="error-message">
+                <h1>404 - Page Not Found</h1>
+                <p>The page you're looking for doesn't exist.</p>
+                <p>Redirecting to homepage in <span id="countdown">3</span> seconds...</p>
+                <p>If you are not redirected automatically, <a href="index.html">click here to go to the homepage</a>.</p>
+            </div>
+        </div>
     </div>
+
+   
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
