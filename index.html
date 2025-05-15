@@ -9,7 +9,6 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/main.css">
-	<script src="main.js"></script>
 </head>
 <body>
 		<div class="fronter">
@@ -30,10 +29,28 @@
     </header>
 	<div class="carousel-container">
         <div class="carousel">
-            <img src="images/RenderProject.png" alt="Image 1">
-            <img src="images/dog.JPG" alt="Image 2">
-            <img src="images/IMG_4109.jpeg" alt="Image 3">
-            <img src="images/head.jpg" alt="Image 4">
+            <div class="mySlides">
+                <img src="images/doggo.jpeg" alt="Image 1">
+            </div>
+			<div class="mySlides">
+                <img src="images/washmon.jpeg" alt="Image 2" class="lower-position">
+            </div>
+            <div class="mySlides">
+                <img src="images/mom.JPG" alt="Image 2" class="lower-position">
+            </div>
+            <div class="mySlides">
+                <img src="images/RenderProject.png" alt="Image 3">
+            </div>
+            <div class="mySlides">
+                <img src="images/head.jpg" alt="Image 4">
+            </div>
+        </div>
+        <div class="dots" style="text-align:center">
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+            <span class="dot" onclick="currentSlide(4)"></span>
+            <span class="dot" onclick="currentSlide(5)"></span>
         </div>
     </div>
  
@@ -56,5 +73,6 @@
 			</div>
 		</div>
 	</footer>
+	<script src="main.js"></script>
 </body>
 </html>
