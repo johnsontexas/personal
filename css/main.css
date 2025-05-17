@@ -607,10 +607,10 @@ nav {
 }
 
 .content-sections section {
-  aspect-ratio: 1;
-  position: relative;
   background-size: cover;
   background-position: center;
+  position: relative;
+  aspect-ratio: 1;
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
@@ -637,11 +637,6 @@ nav {
   background: linear-gradient(to top, rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.75));
 }
 
-.section-link section:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px var(--shadow);
-}
-
 .section-link section:hover .section-overlay {
   background: rgba(44, 62, 80, 0.85);
 }
@@ -652,6 +647,11 @@ nav {
 
 .section-link section:hover .section-overlay.bottom {
   background: linear-gradient(to top, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.85));
+}
+
+.section-link section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px var(--shadow);
 }
 
 /* Updated text styles for overlays */
