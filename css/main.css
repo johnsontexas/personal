@@ -596,43 +596,155 @@ nav {
   }
 }
 
+/* Updated section styles for index page */
 .content-sections {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
 }
 
 .content-sections section {
-  margin-bottom: 40px;
-  padding: 30px;
-  background-color: var(--card-bg);
+  aspect-ratio: 1;
+  position: relative;
+  background-size: cover;
+  background-position: center;
   border-radius: 12px;
-  box-shadow: 0 4px 15px var(--shadow);
+  overflow: hidden;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.content-sections section:hover {
+/* Section overlays */
+.section-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: rgba(44, 62, 80, 0.75);
+  padding: 20px 25px;
+  transition: all 0.3s ease;
+}
+
+.section-overlay.top {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.75));
+}
+
+.section-overlay.bottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.75));
+}
+
+.section-link section:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px var(--shadow);
 }
 
-.content-sections h3 {
-  color: var(--primary-color);
-  margin-bottom: 20px;
+.section-link section:hover .section-overlay {
+  background: rgba(44, 62, 80, 0.85);
+}
+
+.section-link section:hover .section-overlay.top {
+  background: linear-gradient(to bottom, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.85));
+}
+
+.section-link section:hover .section-overlay.bottom {
+  background: linear-gradient(to top, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.85));
+}
+
+/* Updated text styles for overlays */
+.section-overlay h3 {
+  color: var(--light-text);
+  margin: 0;
   font-size: 1.5rem;
   font-weight: 500;
   letter-spacing: 0.5px;
-  border-bottom: 2px solid var(--accent-color);
-  padding-bottom: 12px;
-  display: inline-block;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.content-sections p {
-  color: var(--text-color);
-  line-height: 1.8;
-  margin: 0;
-  font-size: 1.1rem;
-  text-align: left;
+.section-overlay p {
+  color: var(--light-text);
+  margin: 12px 0 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Section-specific backgrounds with enhanced styling */
+.intro-section {
+  background-image: url('../images/self/head.jpg');
+  background-position: center 30%;
+}
+
+.education-section {
+  background-image: url('../images/Media/RenderProject.png');
+  background-position: center;
+}
+
+.resume-section {
+  background-image: url('../images/self/mom.JPG');
+  background-position: center;
+}
+
+.projects-section {
+  background-image: url('../images/self/doggo.jpeg');
+  background-position: center;
+}
+
+.gallery-section {
+  background-image: url('../images/Media/washmoncar.jpeg');
+  background-position: center;
+}
+
+.contact-section {
+  background-image: url('../images/Media/RenderProject.png');
+  background-position: center;
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+  .content-sections {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 15px;
+  }
+  
+  .section-overlay {
+    padding: 15px 20px;
+  }
+  
+  .section-overlay h3 {
+    font-size: 1.3rem;
+  }
+  
+  .section-overlay p {
+    font-size: 0.95rem;
+    margin-top: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .content-sections {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 10px;
+  }
+  
+  .section-overlay {
+    padding: 12px 15px;
+  }
+  
+  .section-overlay h3 {
+    font-size: 1.2rem;
+  }
+  
+  .section-overlay p {
+    font-size: 0.9rem;
+    margin-top: 8px;
+  }
 }
 
 /* Section-specific colors */
@@ -647,37 +759,6 @@ nav {
 .faith-section h3 { border-color: var(--secondary-color); }
 .linguistics-section h3 { border-color: var(--accent-color); }
 .future-section h3 { border-color: var(--secondary-color); }
-
-/* Media Queries */
-@media screen and (max-width: 768px) {
-  .content-sections section {
-    padding: 25px;
-    margin-bottom: 30px;
-  }
-  
-  .content-sections h3 {
-    font-size: 1.4rem;
-  }
-  
-  .content-sections p {
-    font-size: 1rem;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .content-sections section {
-    padding: 20px;
-    margin-bottom: 25px;
-  }
-  
-  .content-sections h3 {
-    font-size: 1.3rem;
-  }
-  
-  .content-sections p {
-    font-size: 0.95rem;
-  }
-}
 
 /* Section link styles */
 .section-link {
@@ -721,23 +802,3 @@ nav {
 .projects-section h3 { border-color: var(--accent-color); }
 .gallery-section h3 { border-color: var(--secondary-color); }
 .contact-section h3 { border-color: var(--accent-color); }
-
-/* Enhanced hover effects for clickable sections */
-.section-link section:hover {
-  background-color: var(--card-bg);
-  box-shadow: 0 8px 25px var(--shadow);
-}
-
-.section-link section:hover h3 {
-  color: var(--accent-color);
-}
-
-/* Keep intro section non-clickable */
-.intro-section {
-  cursor: default;
-}
-
-.intro-section:hover {
-  transform: none;
-  box-shadow: 0 4px 15px var(--shadow);
-}
