@@ -595,3 +595,149 @@ nav {
     cursor: pointer;
   }
 }
+
+.content-sections {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.content-sections section {
+  margin-bottom: 40px;
+  padding: 30px;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.content-sections section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px var(--shadow);
+}
+
+.content-sections h3 {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 12px;
+  display: inline-block;
+}
+
+.content-sections p {
+  color: var(--text-color);
+  line-height: 1.8;
+  margin: 0;
+  font-size: 1.1rem;
+  text-align: left;
+}
+
+/* Section-specific colors */
+.intro-section h3 { border-color: var(--secondary-color); }
+.academic-section h3 { border-color: var(--accent-color); }
+.technical-section h3 { border-color: var(--secondary-color); }
+.creative-section h3 { border-color: var(--accent-color); }
+.athletic-section h3 { border-color: var(--secondary-color); }
+
+/* Additional section colors for about page */
+.leadership-section h3 { border-color: var(--accent-color); }
+.faith-section h3 { border-color: var(--secondary-color); }
+.linguistics-section h3 { border-color: var(--accent-color); }
+.future-section h3 { border-color: var(--secondary-color); }
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+  .content-sections section {
+    padding: 25px;
+    margin-bottom: 30px;
+  }
+  
+  .content-sections h3 {
+    font-size: 1.4rem;
+  }
+  
+  .content-sections p {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .content-sections section {
+    padding: 20px;
+    margin-bottom: 25px;
+  }
+  
+  .content-sections h3 {
+    font-size: 1.3rem;
+  }
+  
+  .content-sections p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Section link styles */
+.section-link {
+  text-decoration: none;
+  display: block;
+  color: inherit;
+  transition: transform 0.3s ease;
+}
+
+.section-link:hover {
+  transform: translateY(-5px);
+}
+
+.section-link section {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.section-link section::after {
+  content: '→';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+  color: var(--accent-color);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.section-link:hover section::after {
+  opacity: 1;
+  right: 30px;
+}
+
+/* Section-specific colors */
+.about-section h3 { border-color: var(--secondary-color); }
+.education-section h3 { border-color: var(--accent-color); }
+.resume-section h3 { border-color: var(--secondary-color); }
+.projects-section h3 { border-color: var(--accent-color); }
+.gallery-section h3 { border-color: var(--secondary-color); }
+.contact-section h3 { border-color: var(--accent-color); }
+
+/* Enhanced hover effects for clickable sections */
+.section-link section:hover {
+  background-color: var(--card-bg);
+  box-shadow: 0 8px 25px var(--shadow);
+}
+
+.section-link section:hover h3 {
+  color: var(--accent-color);
+}
+
+/* Keep intro section non-clickable */
+.intro-section {
+  cursor: default;
+}
+
+.intro-section:hover {
+  transform: none;
+  box-shadow: 0 4px 15px var(--shadow);
+}
