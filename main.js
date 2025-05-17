@@ -6,6 +6,26 @@ let isTransitioning = false;
 document.addEventListener('DOMContentLoaded', function() {
     showSlides(slideIndex);
     startSlideShow();
+    
+    // Add click handlers for navigation
+    const prevNav = document.querySelector('.carousel-nav.prev');
+    const nextNav = document.querySelector('.carousel-nav.next');
+    
+    prevNav.addEventListener('click', function() {
+        if (!isTransitioning) {
+            isTransitioning = true;
+            slideIndex--;
+            showSlides(slideIndex);
+        }
+    });
+    
+    nextNav.addEventListener('click', function() {
+        if (!isTransitioning) {
+            isTransitioning = true;
+            slideIndex++;
+            showSlides(slideIndex);
+        }
+    });
 });
 
 function startSlideShow() {
@@ -31,10 +51,11 @@ function plusSlides(n) {
 
 // Thumbnail image controls
 function currentSlide(n) {
-    if (isTransitioning) return;
-    isTransitioning = true;
-    showSlides(slideIndex = n);
-    startSlideShow(); // Reset timer
+    if (!isTransitioning) {
+        isTransitioning = true;
+        slideIndex = n;
+        showSlides(slideIndex);
+    }
 }
 
 function showSlides(n) {
