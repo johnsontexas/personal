@@ -595,6 +595,49 @@ nav {
   color: var(--primary-color) !important;
 }
 
+/* Optional strip of extra photos under a project card's main image.
+   Used on the Neuroscience research entry to show the presentation and
+   the full internship cohort without letterboxing them in the main box. */
+.project-figs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin: 0.5rem 0 0.5rem;
+}
+
+.project-figs img {
+  width: 220px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 0;
+  background-color: var(--background);
+}
+
+@media screen and (max-width: 480px) {
+  .project-figs img {
+    width: 100%;
+    height: 200px;
+  }
+}
+
+/* Phone screenshots in a strip: show them upright and uncropped rather than
+   cropping a portrait screen into a landscape thumbnail. */
+.project-figs.shots img {
+  width: 150px;
+  height: auto;
+  object-fit: contain;
+  background-color: transparent;
+}
+
+@media screen and (max-width: 480px) {
+  .project-figs.shots img {
+    width: 45%;
+    height: auto;
+  }
+}
+
 /* Remove mobile-specific styles since we're using click/tap for all devices */
 @media (hover: none) {
   .gallery-item {

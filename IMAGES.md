@@ -1,69 +1,54 @@
-# Image slots to fill
+# Images
 
-Three spots on the site currently show `images/Mis/holder.png`, which renders as a
-plain grey block. This file lists each one. Delete this file whenever you like,
-it is not linked from the site and does not affect anything.
+This file is just notes for you. It is not linked from the site and deleting it
+changes nothing.
 
-## How to fill a slot
+## Source vs. web copies
 
-1. Save your image at the path listed below.
-2. Open the HTML file and change that one `src="images/Mis/holder.png"` to your path.
-3. Update the `alt` text if the image shows something different from the description.
+- **`images/Johnsontexasimages/`** is the drop folder for full-size originals
+  (from phones and the Leadership Initiatives photographer). These are large and
+  are **not** referenced by any page.
+- The site only ever loads the resized copies in **`images/Media/`**. When you
+  add a new photo, resize it before wiring it in. On macOS:
 
-Each slot also has a comment directly above it in the HTML repeating this.
+  ```
+  sips -Z 1400 -s formatOptions 65 "images/Johnsontexasimages/.../original.jpg" \
+       --out "images/Media/short-name.jpg"
+  ```
 
-## The three slots
+  Aim for the long edge around 1400 px and the file under ~350 KB.
 
-| # | Page | Entry | Save your file as |
-|---|------|-------|-------------------|
-| 1 | `projects.html` | Neuroscience & Neuroethics Research | `images/Media/research.jpg` |
-| 2 | `projects.html` | Better U LLC | `images/Mis/betterullc.png` |
-| 3 | `projects.html` | CogTrack | `images/Mis/cogtrack.png` |
+## The three project slots (now filled)
 
-## Size and format
+The grey `images/Mis/holder.png` placeholders are gone.
 
-Same for all three:
+| Page | Entry | Image now used |
+|------|-------|----------------|
+| `projects.html` | Neuroscience &amp; Neuroethics Research | `li-presentation.jpg`, plus `li-team.jpg` and `li-group.jpg` in the small strip |
+| `projects.html` | Better U LLC &amp; BetterU (the two entries are now merged into one) | three-phone strip: `Mis/BetterU.PNG`, `betteru-trainer.jpg`, `betteru-community.jpg` |
+| `projects.html` | CogTrack | no image yet (text-only card, on purpose, until there are real screens) |
 
-- **Target size: 1200 x 700 px**, landscape, roughly 16:9
-- **Keep it under about 300 KB** so pages stay fast
-- **JPG** for photographs, **PNG** for logos and screenshots
+## New `images/Media/` files added in the 2026 update
 
-### Why that size
+- `li-presentation.jpg`, `li-group.jpg`, `li-team.jpg` &ndash; Advanced Medical
+  Neuroscience Internship at Georgetown
+- `guatemala-stem.jpg`, `guatemala-group.jpg`, `guatemala-antigua.jpg` &ndash;
+  July 2026 mission trip
+- `xc-team.jpg` &ndash; cross country teammates (Media Gallery)
+- `betteru-community.jpg`, `betteru-trainer.jpg` &ndash; BetterU app screens
+  (resized from `images/Johnsontexasimages/betteru/`)
 
-The image box in a project card renders at up to **600 x 350 px** on a wide screen.
-1200 x 700 is exactly double that, so it stays sharp on retina displays without
-being needlessly heavy.
+Every large existing photo in `images/Media/` was also recompressed in place
+(no visible change, roughly a 5x smaller total), and gallery/project images now
+use `loading="lazy"`.
 
-The CSS uses `object-fit: contain`, which means **nothing is ever cropped**. Any
-aspect ratio will display in full. The tradeoff is that a portrait photo gets
-grey bars down both sides and looks small. Landscape fills the box properly.
+## Not used anymore
 
-### Slot-specific notes
-
-- **Slot 1, research.** A landscape photo works best. A single phone photo held
-  vertically will letterbox badly.
-- **Slot 2, Better U LLC.** A logo on a plain background is a good fit. PNG with
-  transparency is fine, the box background is the site's light grey.
-- **Slot 3, CogTrack.** One phone screenshot is portrait and will look small.
-  Two or three screens side by side on a plain background fills the box much better.
-  There is a `cogtrack1.png` in your Downloads that might be a starting point.
-
-## Images already in place, nothing needed
-
-- BetterU app entry uses `images/Mis/BetterU.PNG`
-- Illustrator piece uses `images/Media/RenderProject.png`
-- Home page hero and card images are unchanged
-- Footer icons are unchanged, except the new `images/Icons/linkedin.svg`
+`images/Media/venice.jpeg` and `images/Media/redboat.jpeg` were dropped from the
+Media Gallery (self-deprecating captions). The files are still in the repo if you
+want them back.
 
 ## The LinkedIn icon
 
-I drew `images/Icons/linkedin.svg` by hand as a white mark on a transparent
-background, to match the other four footer icons. It is a plain geometric
-approximation, not LinkedIn's official asset. If you would rather use the real
-one, swap the file and keep the same filename and the footers all update at once.
-
-## Optional: the Mentions page
-
-`mentions.html` has no images at all right now, just link cards. If you want
-thumbnails there later, the same `.project-item` pattern and the same 1200 x 700
-guidance apply. Say the word and I will wire the slots in.
+`images/Icons/linkedin.svg` is a hand-drawn white mark to match the other footer
+icons, not LinkedIn's official asset. Swap the file (same name) to use the real one.
