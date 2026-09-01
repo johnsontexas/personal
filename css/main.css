@@ -1,13 +1,20 @@
 :root {
-  --primary-color: #2c3e50;    /* Deep blue-gray */
-  --secondary-color: #34495e;  /* Darker blue-gray */
-  --accent-color: #7f8c8d;     /* Medium gray */
-  --text-color: #2c3e50;       /* Dark blue-gray */
-  --light-text: #ecf0f1;       /* Light gray */
-  --background: #f5f6fa;       /* Light gray-blue */
-  --card-bg: #ffffff;          /* White */
-  --shadow: rgba(0, 0, 0, 0.08);
-  --hover-color: #2c3e50;      /* Dark blue-gray */
+  /* 2026 refresh: warm paper, ink, and a single restrained bronze accent.
+     Variable names are kept from the old palette so existing rules still map. */
+  --primary-color: #202b33;    /* Ink — headings, strong text */
+  --secondary-color: #2f3b44;  /* Deep slate — footer, nav ink */
+  --accent-color: #8a5a2b;     /* Muted bronze — links, rules, current-page mark */
+  --accent-deep: #5f3d1d;      /* Bronze, pressed */
+  --text-color: #3c4650;       /* Body text */
+  --light-text: #f4f1ea;       /* On dark */
+  --background: #f6f4ef;       /* Warm paper */
+  --card-bg: #ffffff;          /* Card */
+  --rule: #e5ded1;             /* Hairline on paper */
+  --shadow: rgba(32, 43, 51, 0.07);
+  --hover-color: #202b33;
+
+  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-body: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .gallery {
@@ -89,36 +96,48 @@
 .fronter {
   color: var(--text-color);
   text-align: center;
-  margin-bottom: 2rem;
-  padding: 3rem 10px;
-  background-color: var(--card-bg);
-  box-shadow: 0 2px 4px var(--shadow);
+  margin-bottom: 2.5rem;
+  padding: clamp(3rem, 8vw, 5.5rem) 20px clamp(2.25rem, 5vw, 3.5rem);
+  background-color: var(--background);
+  border-bottom: 1px solid var(--rule);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
 }
 
 .fronter h1 {
-  margin-bottom: 1rem;
-  letter-spacing: -1px;
+  margin-bottom: 0.75rem;
 }
 
 .fronter h2 {
-  font-weight: 400;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(12px, 1.6vw, 14px);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
   color: var(--accent-color);
-  letter-spacing: 1px;
 }
 
 .fronter2 {
   color: var(--text-color);
   text-align: center;
-  margin-bottom: 10px;
-  padding: 20px 10px;
-  background-color: var(--card-bg);
-  box-shadow: 0px 4px 10px var(--shadow);
+  margin-bottom: 0;
+  padding: clamp(2rem, 5vw, 3rem) 20px clamp(1.5rem, 3vw, 2rem);
+  background-color: var(--background);
+  border-bottom: 1px solid var(--rule);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.fronter2 h3 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(12px, 1.6vw, 13px);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent-color);
+  margin-top: 0.5rem;
 }
 
 .center {
@@ -129,42 +148,46 @@
 }
 
 body {
-  font-family: 'Lato', serif;
+  font-family: var(--font-body);
   margin: 0;
   background-color: var(--background);
   color: var(--text-color);
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
+  -webkit-font-smoothing: antialiased;
 }
 
 body.fade-out {
   opacity: 0;
 }
 
-h1 {
-  font-size: clamp(40px, 8vw, 100px);
-  font-weight: 300;
-  margin-bottom: 0;
+h1, h2, h3 {
+  font-family: var(--font-display);
   color: var(--primary-color);
+  font-weight: 400;
+}
+
+h1 {
+  font-size: clamp(38px, 7vw, 76px);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin-bottom: 0;
 }
 
 h2 {
-  font-size: clamp(24px, 4vw, 40px);
-  font-weight: 300;
-  text-transform: uppercase;
-  color: var(--primary-color);
+  font-size: clamp(24px, 4vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
 h3 {
   font-size: clamp(18px, 2.5vw, 22px);
-  font-weight: 300;
-  text-transform: uppercase;
-  color: var(--primary-color);
+  line-height: 1.3;
 }
 
 p {
   margin-bottom: 30px;
-  line-height: 1.6;
+  line-height: 1.7;
   color: var(--text-color);
   font-size: clamp(14px, 2vw, 16px);
 }
@@ -219,62 +242,43 @@ footer {
   margin-top: 3rem;
 }
 
+nav a.button,
+nav a.page,
 .button, .page {
-  padding: 12px 24px;
-  color: var(--light-text);
-  border-radius: 6px;
+  padding: 4px 2px 6px;
+  color: var(--text-color);
+  border-radius: 0;
   text-transform: uppercase;
   text-decoration: none;
-  box-shadow: 0 2px 4px var(--shadow);
   display: inline-block;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  letter-spacing: 1px;
-  font-weight: 500;
-  position: relative;
-  overflow: hidden;
+  font-size: 12px;
+  transition: color 0.25s ease, border-color 0.25s ease;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  border-bottom: 2px solid transparent;
 }
 
-.button {
-  background-color: var(--secondary-color);
+nav a.button:hover,
+.button:hover {
+  color: var(--primary-color);
+  border-bottom-color: var(--rule);
 }
 
+nav a.page,
 .page {
-  background-color: var(--accent-color);
-}
-
-.button:hover, .page:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px var(--shadow);
-}
-
-.button::after, .page::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--light-text);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.3s ease;
-}
-
-.button:hover::after, .page:hover::after {
-  transform: scaleX(1);
-  transform-origin: left;
+  color: var(--primary-color);
+  border-bottom-color: var(--accent-color);
 }
 
 nav {
   text-align: center;
-  margin: 30px auto;
+  margin: 28px auto 40px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 15px;
+  gap: 14px 28px;
   padding: 0 20px;
-  max-width: 1000px;
+  max-width: 900px;
 }
 
 .container {
@@ -551,30 +555,31 @@ nav {
   align-items: center;
   text-align: center;
   background-color: var(--card-bg);
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px var(--shadow);
-  transition: all 0.4s ease;
+  padding: 34px 34px 30px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  box-shadow: 0 1px 2px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .project-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px var(--shadow);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px var(--shadow);
 }
 
 .project-item img {
   max-width: 100%;
-  height: 350px;
+  height: 340px;
   object-fit: contain;
   margin: 1rem 0;
-  border-radius: 8px;
+  border-radius: 4px;
   background-color: var(--background);
 }
 
 .project-item h3 {
-  margin: 1.5rem 0 1rem;
+  margin: 0.75rem 0 1rem;
   color: var(--primary-color);
-  font-size: 1.4rem;
+  font-size: clamp(1.25rem, 2.4vw, 1.5rem);
 }
 
 .project-item p {
@@ -647,46 +652,51 @@ nav {
 
 /* Updated section styles for index page */
 .content-sections {
-  max-width: 1200px;
+  max-width: 1140px;
   margin: 0 auto;
   padding: 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 24px;
 }
 
 .content-sections section {
   background-size: cover;
   background-position: center;
   position: relative;
-  aspect-ratio: 1;
-  border-radius: 12px;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 1px 2px var(--shadow);
 }
 
-/* Add styles for sections without background images */
-.content-sections section:not([style*="background-image"]) {
-  background-color: var(--primary-color);
+/* Text-only sections (about / education pages) opt out of the image-card
+   sizing entirely: no fixed aspect ratio, no clipping, plain flow. These
+   sections carry inline `background-image: none`. */
+.content-sections section:not([style*="background-image"]),
+.content-sections section[style*="none"] {
+  background: transparent;
+  background-color: transparent;
   aspect-ratio: auto;
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: auto;
+  padding: 0;
 }
 
-.content-sections section:not([style*="background-image"]) .section-overlay {
-  position: relative;
-  width: 100%;
+.content-sections section[style*="none"] h3 {
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--rule);
 }
 
-.content-sections section:not([style*="background-image"]) .section-overlay.top {
-  background: var(--primary-color);
-}
-
-.content-sections section:not([style*="background-image"]) .section-overlay.bottom {
-  background: var(--primary-color);
+.content-sections section[style*="none"] p {
+  text-align: left;
 }
 
 /* Section overlays */
@@ -694,86 +704,40 @@ nav {
   position: absolute;
   left: 0;
   right: 0;
-  background: rgba(44, 62, 80, 0.75);
-  padding: 20px 25px;
-  transition: all 0.3s ease;
+  padding: 18px 22px;
+  transition: background 0.3s ease;
 }
 
 .section-overlay.top {
   top: 0;
-  background: linear-gradient(to bottom, rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.75));
+  background: linear-gradient(to bottom, rgba(24, 32, 39, 0.72), rgba(24, 32, 39, 0));
+  padding-bottom: 34px;
 }
 
 .section-overlay.bottom {
   bottom: 0;
-  background: linear-gradient(to top, rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.75));
-}
-
-.section-link section:hover .section-overlay {
-  background: rgba(44, 62, 80, 0.85);
-}
-
-.section-link section:hover .section-overlay.top {
-  background: linear-gradient(to bottom, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.85));
-}
-
-.section-link section:hover .section-overlay.bottom {
-  background: linear-gradient(to top, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.85));
+  background: linear-gradient(to top, rgba(24, 32, 39, 0.9), rgba(24, 32, 39, 0));
+  padding-top: 40px;
 }
 
 .section-link section:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px var(--shadow);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px var(--shadow);
 }
 
 /* Updated text styles for overlays */
 .section-overlay h3 {
-  color: var(--light-text);
+  color: #fff;
   margin: 0;
-  font-size: 1.5rem;
+  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
   font-weight: 500;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .section-overlay p {
-  color: var(--light-text);
-  margin: 12px 0 0;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  opacity: 0.95;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Section-specific backgrounds with enhanced styling */
-.intro-section {
-  background-image: url('../images/self/head.jpg');
-  background-position: center 30%;
-}
-
-.education-section {
-  background-image: url('../images/Media/RenderProject.png');
-  background-position: center;
-}
-
-.resume-section {
-  background-image: url('../images/self/mom.JPG');
-  background-position: center;
-}
-
-.projects-section {
-  background-image: url('../images/self/doggo.jpeg');
-  background-position: center;
-}
-
-.gallery-section {
-  background-image: url('../images/Media/washmoncar.jpeg');
-  background-position: center;
-}
-
-.contact-section {
-  background-image: url('../images/Media/RenderProject.png');
-  background-position: center;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 8px 0 0;
+  font-size: 0.98rem;
+  line-height: 1.55;
 }
 
 /* Media Queries */
@@ -841,13 +805,14 @@ nav {
 main a:link,
 main a:visited,
 main a:active {
-  color: var(--secondary-color);
+  color: var(--accent-color);
   text-decoration: underline;
+  text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
 
 main a:hover {
-  color: var(--primary-color);
+  color: var(--accent-deep);
 }
 
 /* "Around the Web" block at the foot of the projects page. */
@@ -897,31 +862,6 @@ main a:hover {
   overflow: hidden;
 }
 
-.section-link section::after {
-  content: '→';
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.5rem;
-  color: var(--accent-color);
-  opacity: 0;
-  transition: all 0.3s ease;
-}
-
-.section-link:hover section::after {
-  opacity: 1;
-  right: 30px;
-}
-
-/* Section-specific colors */
-.about-section h3 { border-color: var(--secondary-color); }
-.education-section h3 { border-color: var(--accent-color); }
-.resume-section h3 { border-color: var(--secondary-color); }
-.projects-section h3 { border-color: var(--accent-color); }
-.gallery-section h3 { border-color: var(--secondary-color); }
-.contact-section h3 { border-color: var(--accent-color); }
-
 /* Add styles for page transitions */
 .page-transition {
   position: fixed;
@@ -966,4 +906,78 @@ main a:hover {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* ---- 2026 refresh: home lead + shared bits ---- */
+
+.home-intro {
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.home-intro p {
+  font-size: clamp(16px, 1.9vw, 19px);
+  line-height: 1.75;
+  color: var(--text-color);
+  margin-bottom: 0;
+}
+
+.quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 26px;
+  margin-top: 1.6rem;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.home-intro .quick-links a {
+  color: var(--primary-color);
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 3px;
+  transition: color 0.25s ease;
+}
+
+.home-intro .quick-links a:hover {
+  color: var(--accent-deep);
+}
+
+/* Section intro sentence that leads a text page (about / education) */
+main > p:first-child {
+  color: var(--text-color);
+}
+
+/* Contact page link stack */
+.contact-lines {
+  line-height: 2.4;
+  font-size: clamp(15px, 1.8vw, 17px);
+}
+
+/* Plain-flow page headings (resume) match the about/education section headings */
+main > h3 {
+  margin: 2.25rem 0 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--rule);
+}
+
+main > h3:first-child {
+  margin-top: 0.5rem;
+}
+
+/* Eyebrow label above a project or section heading */
+.eyebrow {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-color);
+  margin-bottom: 0.5rem;
 }

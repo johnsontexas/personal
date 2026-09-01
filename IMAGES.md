@@ -1,54 +1,43 @@
 # Images
 
-This file is just notes for you. It is not linked from the site and deleting it
-changes nothing.
+Notes for you. Not linked from the site; safe to delete.
 
-## Source vs. web copies
+## Where images live
 
-- **`images/Johnsontexasimages/`** is the drop folder for full-size originals
-  (from phones and the Leadership Initiatives photographer). These are large and
-  are **not** referenced by any page.
-- The site only ever loads the resized copies in **`images/Media/`**. When you
-  add a new photo, resize it before wiring it in. On macOS:
+- **`images/Johnsontexasimages/`** — drop folder for full-size originals from
+  phones and event photographers. Large, and **not** referenced by any page.
+- **`images/Media/`** — the resized copies the site actually loads. Resize before
+  wiring anything in. On macOS:
 
   ```
   sips -Z 1400 -s formatOptions 65 "images/Johnsontexasimages/.../original.jpg" \
        --out "images/Media/short-name.jpg"
   ```
 
-  Aim for the long edge around 1400 px and the file under ~350 KB.
+  Long edge ~1400 px, file under ~350 KB.
 
-## The three project slots (now filled)
+## In use now (`images/Media/`)
 
-The grey `images/Mis/holder.png` placeholders are gone.
+| File | Where |
+|------|-------|
+| `li-presentation.jpg`, `li-team.jpg`, `li-group.jpg` | projects.html (neuroscience card), index.html |
+| `guatemala-stem.jpg`, `guatemala-group.jpg`, `guatemala-antigua.jpg` | mentions.html, index.html section cards |
+| `xc-team.jpg` | index.html (Resume card) |
+| `betteru-community.jpg`, `betteru-trainer.jpg` + `Mis/BetterU.PNG` | projects.html (Better U card) |
 
-| Page | Entry | Image now used |
-|------|-------|----------------|
-| `projects.html` | Neuroscience &amp; Neuroethics Research | `li-presentation.jpg`, plus `li-team.jpg` and `li-group.jpg` in the small strip |
-| `projects.html` | Better U LLC &amp; BetterU (the two entries are now merged into one) | three-phone strip: `Mis/BetterU.PNG`, `betteru-trainer.jpg`, `betteru-community.jpg` |
-| `projects.html` | CogTrack | no image yet (text-only card, on purpose, until there are real screens) |
+## 2026 cleanup
 
-## New `images/Media/` files added in the 2026 update
+The Media Gallery page and all its travel/art photos were removed, along with the
+"Christ Crucifixion" project and the dog / red-hoodie portraits. `images/self/`
+is gone. If you want any of those photos back they are in git history.
 
-- `li-presentation.jpg`, `li-group.jpg`, `li-team.jpg` &ndash; Advanced Medical
-  Neuroscience Internship at Georgetown
-- `guatemala-stem.jpg`, `guatemala-group.jpg`, `guatemala-antigua.jpg` &ndash;
-  July 2026 mission trip
-- `xc-team.jpg` &ndash; cross country teammates (Media Gallery)
-- `betteru-community.jpg`, `betteru-trainer.jpg` &ndash; BetterU app screens
-  (resized from `images/Johnsontexasimages/betteru/`)
+## Open TODOs (also flagged in projects.html)
 
-Every large existing photo in `images/Media/` was also recompressed in place
-(no visible change, roughly a 5x smaller total), and gallery/project images now
-use `loading="lazy"`.
-
-## Not used anymore
-
-`images/Media/venice.jpeg` and `images/Media/redboat.jpeg` were dropped from the
-Media Gallery (self-deprecating captions). The files are still in the repo if you
-want them back.
+- `betterullc.com` still has no DNS records, so it is shown as text, not a link.
+  When it resolves, swap the placeholder for the real `<a>` (comment in projects.html).
+- Add the direct App Store URL for BetterU when available.
 
 ## The LinkedIn icon
 
 `images/Icons/linkedin.svg` is a hand-drawn white mark to match the other footer
-icons, not LinkedIn's official asset. Swap the file (same name) to use the real one.
+icons, not LinkedIn's official asset.
