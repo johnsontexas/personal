@@ -953,6 +953,19 @@ main > p:first-child {
   color: var(--text-color);
 }
 
+/* Cut-out portrait used on the home and about pages so visitors can see me */
+.self-portrait {
+  display: block;
+  width: clamp(160px, 24vw, 216px);
+  height: auto;
+  margin: 0 auto 1.5rem;
+}
+
+.self-portrait.on-about {
+  margin-top: 0.5rem;
+  margin-bottom: 2.25rem;
+}
+
 /* Contact page link stack */
 .contact-lines {
   line-height: 2.4;
