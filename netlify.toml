@@ -1,0 +1,5 @@
+# Only the functions directory is declared here. The build and publish settings
+# stay where they already are, in the Netlify UI, so adding this file cannot
+# change how the rest of the site is built.
+[functions]
+  directory = "netlify/functions"

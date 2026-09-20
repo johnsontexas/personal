@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fly Chess &mdash; Daniel A. Johnson</title>
+<link rel="icon" type="image/x-icon" href="/images/icon.ico">
+<meta name="description" content="Play chess against a fruit fly's mushroom body: 5,177 Kenyon cells and 62,261 FlyWire synapses, learning from every game.">
+<link rel="stylesheet" href="/flychess/style.css">
+</head>
+<body class="flychess">
+<div id="flood"></div><div id="floodtxt">DOPAMINE</div>
+
+<div class="fronter">
+  <h1>Fly Chess</h1>
+  <h2>A fruit fly's mushroom body, taught to play chess</h2>
+</div>
+<div class="sitenav">
+  <a href="/">Home</a>
+  <a href="/about.html">About Me</a>
+  <a href="/classes.html">Education</a>
+  <a href="/resume.html">Resume</a>
+  <a href="/projects.html">Projects</a>
+  <a href="/mentions.html">Mentions</a>
+  <a href="/contact.html">Contact</a>
+</div>
+<header>
+  <h1>Fly Chess <span>&mdash; a fruit fly's mushroom body, playing in your browser</span></h1>
+  <div class="sub" id="sub">loading the connectome&hellip;</div>
+</header>
+
+<main>
+  <div style="display:grid;gap:16px">
+    <div class="card">
+      <h2>Board</h2>
+      <div class="boardwrap">
+        <div id="board"></div>
+        <div id="promo"><div><div class="opts">
+          <button data-p="q" title="Queen">&#9819;</button>
+          <button data-p="r" title="Rook">&#9820;</button>
+          <button data-p="b" title="Bishop">&#9821;</button>
+          <button data-p="n" title="Knight">&#9822;</button>
+        </div><div class="lbl">Promote to</div></div></div>
+      </div>
+      <div class="bar">
+        <button id="newW" class="on">Play as White</button>
+        <button id="newB">Play as Black</button>
+        <button id="flip">Flip</button>
+        <button id="sound" title="Move sounds">Sound: on</button>
+        <button id="forget" title="Throw away what this fly has learned">Forget</button>
+      </div>
+      <div id="status">&mdash;</div>
+      <div id="pgnbox">
+        <div class="row" style="margin-bottom:6px">
+          <span>game score &mdash; paste into Lichess, chess.com or any PGN reader</span>
+          <button id="copypgn" style="padding:3px 9px;font-size:12px">Copy</button>
+        </div>
+        <textarea id="pgn" readonly spellcheck="false"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Strength</h2>
+      <div class="elo"><b id="elo">&mdash;</b><span id="elowhat">not measured yet</span></div>
+      <div class="row" style="margin-top:10px"><span>games it has learned from</span>
+        <span class="val" id="games">0</span></div>
+      <div class="row"><span>memory changed</span><span class="val" id="mem">0.000%</span></div>
+      <div class="row"><span>this session, against you</span><span class="val" id="rec">0&ndash;0&ndash;0</span></div>
+      <div class="bar">
+        <button id="measure">Measure its Elo</button>
+        <button id="train">Train against bots</button>
+      </div>
+      <div class="trainrow" id="trainrow" hidden>
+        <span class="pill"><i></i><span id="trainstat">starting&hellip;</span></span>
+      </div>
+      <div class="signin" id="signin">
+        <div id="gbtn"></div>
+        <div class="who" id="who" hidden></div>
+        <div class="note" id="signnote">Sign in with Google to put your name on
+          the leaderboard. You can play and train without it.</div>
+      </div>
+      <div class="note" id="memnote"></div>
+    </div>
+
+    <div class="card">
+      <h2>Predicted Elo as it learns</h2>
+      <div class="chartwrap">
+        <canvas id="eloChart"></canvas>
+        <div class="tip" id="tip"></div>
+      </div>
+      <div class="note" id="chartnote">No measurements yet &mdash; press
+        <em>Measure its Elo</em>, or turn on training.</div>
+    </div>
+  </div>
+
+  <div style="display:grid;gap:16px">
+    <div class="card">
+      <h2>Mushroom body &mdash; live</h2>
+      <canvas id="brain" width="900" height="380"></canvas>
+      <div class="legend">
+        <span class="key"><i style="background:#2a3442"></i>Kenyon cell (silent)</span>
+        <span class="key"><i style="background:#8fd6ff"></i>active &mdash; this position's smell</span>
+        <span class="key"><i style="background:var(--approach)"></i>approach MBON</span>
+        <span class="key"><i style="background:var(--avoid)"></i>avoidance MBON</span>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2>Valence &amp; dopamine</h2>
+        <div class="row"><span>position valence</span><span class="val" id="vnum">0.00</span></div>
+        <div class="meter"><div class="fill" id="vbar"></div></div>
+        <div class="row" style="margin-top:12px"><span>dopamine (prediction error)</span>
+          <span class="val" id="dnum">0.00</span></div>
+        <div class="meter"><div class="fill" id="dbar" style="background:var(--da)"></div></div>
+        <h2 style="margin-top:16px">MBON vote</h2>
+        <canvas id="mbon" width="520" height="74"></canvas>
+      </div>
+
+      <div class="card">
+        <h2>What it smelled</h2>
+        <div id="cands"><div style="color:var(--dim)">waiting for the fly's turn&hellip;</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Leaderboard &mdash; who beats the fly</h2>
+      <div id="lb"><div class="empty">Sign-in gives everyone a name here.
+        Play a game to take a seat.</div></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  The fly scores every legal move by encoding the position it leads to onto 685
+  antennal-lobe projection neurons, letting the calyx sparsify that to 259 of
+  5,177 Kenyon cells, and reading the MBONs' vote. It plays the best-smelling
+  move. Dopamine &mdash; reward prediction error &mdash; rewrites the
+  KC&rarr;MBON synapses as you play, and a win floods it. Wiring, synapse counts
+  and the neuron coordinates above are the FlyWire connectome. Elo is measured
+  against the same built-in opponents the trainer uses, and is a ballpark.
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.12.0/chess.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer
+        onload="window.__initGoogle && window.__initGoogle()"></script>
+<script type="module">
+import { canonical, encode, Brain, loadBrain, WIN_DOPAMINE, N_PN, N_RES,
+         greedyMove, randomMove, gameScore, estimateElo } from '/flychess/flybrain.js';
+const B = await loadBrain('/flychess/fly.bin');
+
+/* ---------------------------------------------------------------- state -- */
+const FILES = "abcdefgh";
+const GLYPH = { p:"♟", n:"♞", b:"♝", r:"♜", q:"♛", k:"♚" };
+const SHAPING = 0.15, DRAW_REWARD = -0.05;
+const PVAL = { p:1, n:3, b:3.2, r:5, q:9, k:0 };
+// Keyed to the encoding, not to a version number someone must remember to
+// bump: weights learned under a different channel layout are meaningless, and
+// silently restoring them is worse than forgetting.
+const KEY = `flychess.${N_PN}.${N_RES}`;
+
+const brain = new Brain(B);
+let game = new Chess(), flyIsWhite = false, flipped = false;
+let sel = null, lastMove = null, busy = false, over = false, pending = false;
+let lastMaterial = 0;
+let baseline = Float32Array.from(B.kmW);     // what the shared brain gave us
+let db = null, shared = false, canWrite = true;
+let stats = { games: 0, elo: B.elo, bench: { random:{s:0,n:0}, greedy:{s:0,n:0} } };
+let rec = { w:0, d:0, l:0 };
+
+const $ = (id) => document.getElementById(id);
+
+/* ----------------------------------------------------------------- board -- */
+const boardEl = $("board");
+function buildBoard() {
+  boardEl.innerHTML = "";
+  for (let r = 0; r < 8; r++) {
+    for (let f = 0; f < 8; f++) {
+      const rr = flipped ? 7 - r : r, ff = flipped ? 7 - f : f;
+      const d = document.createElement("div");
+      d.className = "sq " + ((rr + ff) % 2 ? "d" : "l");
+      d.dataset.sq = FILES[ff] + (8 - rr);
+      // coordinates where a printed board puts them: files along the bottom
+      // edge, ranks up the left edge, whichever way the board is turned
+      if (r === 7) d.insertAdjacentHTML("beforeend", `<span class="co f">${FILES[ff]}</span>`);
+      if (f === 0) d.insertAdjacentHTML("beforeend", `<span class="co r">${8 - rr}</span>`);
+      d.onclick = () => clickSq(d.dataset.sq);
+      boardEl.appendChild(d);
+    }
+  }
+}
+function draw() {
+  document.querySelectorAll(".sq").forEach(s => {
+    s.querySelectorAll(".p,.dot").forEach(e => e.remove());
+    s.classList.remove("mark", "cap", "chk", "w", "b");
+  });
+  game.board().forEach((row, r) => row.forEach((p, f) => {
+    if (!p) return;
+    const el = document.querySelector(`.sq[data-sq="${FILES[f]}${8 - r}"]`);
+    if (!el) return;
+    el.classList.add(p.color === "w" ? "w" : "b");
+    el.insertAdjacentHTML("beforeend", `<span class="p">${GLYPH[p.type]}</span>`);
+  }));
+  if (lastMove) [lastMove.from, lastMove.to].forEach(n => {
+    const e = document.querySelector(`.sq[data-sq="${n}"]`);
+    if (e) e.classList.add("mark");
+  });
+  if (sel) {
+    const e = document.querySelector(`.sq[data-sq="${sel}"]`);
+    if (e) e.classList.add("mark");
+    game.moves({ square: sel, verbose: true }).forEach(m => {
+      const t = document.querySelector(`.sq[data-sq="${m.to}"]`);
+      if (!t) return;
+      if (t.querySelector(".p")) t.classList.add("cap");
+      t.insertAdjacentHTML("beforeend", '<span class="dot"></span>');
+    });
+  }
+  if (game.in_check()) {
+    const me = game.turn() === "w" ? "w" : "b";
+    document.querySelectorAll(".sq").forEach(s => {
+      const p = s.querySelector(".p");
+      if (p && p.textContent === GLYPH.k && s.classList.contains(me)) s.classList.add("chk");
+    });
+  }
+}
+function myTurn() { return !busy && !over && (game.turn() === "w") !== flyIsWhite; }
+function clickSq(name) {
+  if (!myTurn() || promoPending) return;
+  if (sel) {
+    const m = game.moves({ square: sel, verbose: true }).filter(x => x.to === name);
+    if (m.length) {
+      // a pawn reaching the last rank offers four moves, not one
+      if (m.length > 1 && m[0].promotion) { askPromotion(m); return; }
+      human(m[0]);
+      return;
+    }
+  }
+  sel = game.moves({ square: name, verbose: true }).length ? name : null;
+  draw();
+}
+let promoPending = null;
+function askPromotion(moves) {
+  promoPending = moves;
+  $("promo").classList.add("on");
+  // colour the choices like the side that is promoting
+  const white = game.turn() === "w";
+  $("promo").querySelectorAll("button").forEach(b => {
+    b.style.color = white ? "#fff" : "#3b3a37";
+    b.style.webkitTextStroke = white ? ".03em rgba(0,0,0,.6)" : ".03em #15161a";
+  });
+}
+function choosePromotion(piece) {
+  const moves = promoPending;
+  promoPending = null;
+  $("promo").classList.remove("on");
+  if (!moves) return;
+  const mv = moves.find(m => m.promotion === piece) || moves[0];
+  human(mv);
+}
+$("promo").querySelectorAll("button").forEach(b => {
+  b.onclick = () => choosePromotion(b.dataset.p);
+});
+$("promo").onclick = (e) => {                 // clicking the backdrop cancels
+  if (e.target.id === "promo") {
+    promoPending = null; $("promo").classList.remove("on"); sel = null; draw();
+  }
+};
+
+/* ------------------------------------------------------------- the fly -- */
+function material(g, flyWhite) {
+  let s = 0;
+  g.board().forEach(row => row.forEach(p => {
+    if (!p) return;
+    s += ((p.color === "w") === flyWhite) ? PVAL[p.type] : -PVAL[p.type];
+  }));
+  return s;
+}
+function scoreMoves(g, flyWhite) {
+  const out = [];
+  for (const m of g.moves({ verbose: true })) {
+    g.move(m);
+    out.push([m, brain.evaluate(encode(canonical(g, flyWhite), B), false)]);
+    g.undo();
+  }
+  return out;
+}
+async function flyMove() {
+  busy = true; setStatus("The fly is smelling its options…");
+  await tick();          // setTimeout, not a frame: a hidden tab never paints,
+                         // and the fly would sit "smelling" until you came back
+  const scored = scoreMoves(game, flyIsWhite);
+  if (!scored.length) { busy = false; return; }
+  const best = Math.max(...scored.map(s => s[1]));
+  if (pending) {
+    const m = material(game, flyIsWhite), d = m - lastMaterial;
+    lastMaterial = m;
+    brain.reinforce(Math.tanh(d / 3) * SHAPING, best, false, 1);
+  }
+  scored.sort((a, b) => b[1] - a[1]);
+  $("cands").innerHTML = scored.slice(0, 26).map((c, i) =>
+    `<div class="${i === 0 ? "best" : ""}"><span class="mv">${c[0].san}</span>` +
+    `<span>${c[1] >= 0 ? "+" : ""}${c[1].toFixed(3)}</span></div>`).join("");
+
+  for (let i = Math.min(5, scored.length - 1); i >= 0; i--) {
+    game.move(scored[i][0]);
+    brain.evaluate(encode(canonical(game, flyIsWhite), B), true);
+    game.undo();
+    show(); await sleep(70);
+  }
+  const mv = scored[0][0];
+  game.move(mv);
+  brain.evaluate(encode(canonical(game, flyIsWhite), B), true);
+  game.undo();
+  pending = true; show();
+  game.move(mv); lastMove = mv; sel = null; played(mv);
+  busy = false;
+  if (game.game_over()) finish(); else setStatus("Your move.");
+}
+function human(m) {
+  ac();                       // the first click is what unlocks audio
+  game.move(m); lastMove = m; sel = null; played(m);
+  if (game.game_over()) { finish(); return; }
+  flyMove();
+}
+
+/* --------------------------------------------------------- end of game -- */
+function finish() {
+  over = true;
+  let result = 0;
+  if (game.in_checkmate()) result = (game.turn() === "w") !== flyIsWhite ? 1 : -1;
+  const r = result > 0 ? 1 : result < 0 ? -1 : DRAW_REWARD;
+  const gain = result > 0 ? WIN_DOPAMINE : 1;
+  if (pending) brain.reinforce(r, 0, true, gain);
+  stats.games++;
+  rec.w += result > 0; rec.l += result < 0; rec.d += result === 0;
+  persist();
+  const why = game.in_checkmate() ? "checkmate" : game.in_stalemate() ? "stalemate"
+    : game.in_threefold_repetition() ? "repetition"
+    : game.insufficient_material() ? "insufficient material" : "draw";
+  setStatus(`<b>${result > 0 ? "the fly wins" : result < 0 ? "you win" : "draw"}</b> ` +
+            `— ${why}. dopamine ${(Math.abs(r) * gain).toFixed(2)}`);
+  sfx(result > 0 ? "lose" : result < 0 ? "win" : "move");   // from your side
+  showPgn(result);
+  recordResult(result).then(loadLeaderboard);
+  paintStats();
+  setMeter("dbar", "dnum", brain.dopamine, 1);
+  if (result > 0) flood();
+}
+function showPgn(result) {
+  game.header("Event", "Fly Chess",
+              "Site", "mushroom body, FlyWire connectome",
+              "Date", new Date().toISOString().slice(0, 10).replace(/-/g, "."),
+              "White", flyIsWhite ? "Fly (mushroom body)" : "You",
+              "Black", flyIsWhite ? "You" : "Fly (mushroom body)",
+              "Result", result > 0 ? (flyIsWhite ? "1-0" : "0-1")
+                      : result < 0 ? (flyIsWhite ? "0-1" : "1-0") : "1/2-1/2");
+  $("pgn").value = game.pgn({ max_width: 72, newline_char: "\n" });
+  $("pgnbox").classList.add("on");
+}
+$("copypgn").onclick = async () => {
+  const t = $("pgn");
+  try { await navigator.clipboard.writeText(t.value); }
+  catch (e) { t.select(); }
+  $("copypgn").textContent = "Copied";
+  setTimeout(() => ($("copypgn").textContent = "Copy"), 1400);
+};
+
+/* -------------------------------------------------------------- rating -- */
+async function benchGame(kind) {
+  const g = new Chess();
+  const flyWhite = Math.random() < 0.5;
+  for (let ply = 0; ply < 120 && !g.game_over(); ply++) {
+    if ((g.turn() === "w") === flyWhite) {
+      const sc = scoreMoves(g, flyWhite);
+      if (!sc.length) break;
+      let best = sc[0];
+      for (const s of sc) if (s[1] > best[1]) best = s;
+      g.move(best[0]);
+    } else {
+      const m = kind === "greedy" ? greedyMove(g, B) : randomMove(g);
+      if (!m) break;
+      g.move(m);
+    }
+    if (ply % 4 === 0) await frame();     // keep the page responsive
+  }
+  const res = g.in_checkmate() ? ((g.turn() === "w") !== flyWhite ? 1 : -1) : 0;
+  return gameScore(res, material(g, flyWhite));
+}
+let measuring = false;
+async function measure(nEach = 6, quiet = false) {
+  if (measuring) return;
+  measuring = true;
+  const btn = $("measure");
+  btn.disabled = true;
+  for (const kind of ["random", "greedy"]) {
+    for (let i = 0; i < nEach; i++) {
+      if (!quiet) btn.textContent = `Measuring… ${kind} ${i + 1}/${nEach}`;
+      stats.bench[kind].s += await benchGame(kind);
+      stats.bench[kind].n += 1;
+    }
+  }
+  const r = {};
+  for (const k of ["random", "greedy"])
+    if (stats.bench[k].n) r[k] = { score: stats.bench[k].s / stats.bench[k].n, n: stats.bench[k].n };
+  const e = estimateElo(r);
+  if (e !== null) { stats.elo = e; pushElo(); }
+  btn.textContent = "Measure its Elo";
+  btn.disabled = false;
+  measuring = false;
+  paintStats();
+  persist();
+}
+$("measure").onclick = () => measure(6);
+
+function paintStats() {
+  $("elo").textContent = stats.elo === null ? "—" : stats.elo;
+  const n = stats.bench.random.n + stats.bench.greedy.n;
+  $("elowhat").textContent = stats.elo === null
+    ? "press Measure to find out"
+    : n ? `measured here over ${n} benchmark games` : "measured during training";
+  $("games").textContent = stats.games.toLocaleString();
+  $("mem").textContent = (brain.learnedFraction() * 100).toFixed(3) + "%";
+  $("rec").textContent = `${rec.w}–${rec.d}–${rec.l}`;
+  $("memnote").textContent = shared
+    ? (canWrite ? "Learning is shared: every game anyone plays here improves this same fly."
+               : "Shared brain, read-only for you — your games still teach your own copy.")
+    : "This fly's memory lives in your browser. Share the project to pool learning.";
+}
+
+/* ----------------------------------------------------------- persistence -- */
+function quantize(w) {
+  const u = new Uint8Array(w.length);
+  for (let i = 0; i < w.length; i++) {
+    const lo = B.kmW0[i] * 0.05, hi = B.kmW0[i] * 3.0, d = hi - lo;
+    u[i] = Math.max(0, Math.min(255, Math.round(d > 0 ? (w[i] - lo) / d * 255 : 0)));
+  }
+  return u;
+}
+function dequantize(u, out) {
+  for (let i = 0; i < u.length; i++) {
+    const lo = B.kmW0[i] * 0.05, hi = B.kmW0[i] * 3.0;
+    out[i] = lo + (u[i] / 255) * (hi - lo);
+  }
+}
+function u8b64(u) {
+  let s = ""; const C = 0x8000;
+  for (let i = 0; i < u.length; i += C) s += String.fromCharCode.apply(null, u.subarray(i, i + C));
+  return btoa(s);
+}
+function b64u8(s) {
+  const bin = atob(s), u = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  return u;
+}
+function saveLocal() {
+  try {
+    localStorage.setItem(KEY + ".w", u8b64(quantize(B.kmW)));
+    localStorage.setItem(KEY + ".m", JSON.stringify(
+      { zMean: brain.zMean, zVar: brain.zVar, games: stats.games,
+        elo: stats.elo, bench: stats.bench, history: eloHistory }));
+  } catch (e) { /* private mode or full: the fly just forgets */ }
+}
+function loadLocal() {
+  try {
+    const w = localStorage.getItem(KEY + ".w");
+    if (!w) return false;
+    const u = b64u8(w);
+    if (u.length !== B.kmW.length) return false;
+    dequantize(u, B.kmW);
+    const m = JSON.parse(localStorage.getItem(KEY + ".m") || "null");
+    if (m) {
+      brain.zMean = m.zMean; brain.zVar = m.zVar;
+      brain.norm = Math.max(3 * Math.sqrt(Math.max(m.zVar, 1e-12)), 1e-6);
+      stats.games = m.games || 0;
+      if (m.elo != null) stats.elo = m.elo;
+      if (m.bench) stats.bench = m.bench;
+      if (Array.isArray(m.history)) eloHistory = m.history;
+    }
+    return true;
+  } catch (e) { return false; }
+}
+/* ---------------------------------------------------- the shared brain -- */
+// Netlify Blobs behind /api/brain. The browser sends the weights it has now
+// and the weights it started from; the function adds the difference to what is
+// stored, so simultaneous players do not overwrite each other.
+let backendUp = false;
+async function pullShared() {
+  try {
+    const r = await fetch("/api/brain", { cache: "no-store" });
+    if (!r.ok) return false;
+    const d = await r.json();
+    backendUp = true;
+    if (!d || !d.w) return false;
+    const u = b64u8(d.w);
+    if (u.length !== B.kmW.length) return false;      // a different encoding
+    dequantize(u, B.kmW);
+    if (typeof d.zMean === "number") {
+      brain.zMean = d.zMean; brain.zVar = d.zVar;
+      brain.norm = Math.max(3 * Math.sqrt(Math.max(d.zVar, 1e-12)), 1e-6);
+    }
+    stats.games = d.games || 0;
+    if (d.elo != null) stats.elo = d.elo;
+    if (d.bench) stats.bench = d.bench;
+    if (Array.isArray(d.history)) eloHistory = d.history;
+    return true;
+  } catch (e) { return false; }
+}
+let pushing = false;
+async function pushShared() {
+  if (!backendUp || pushing) return;
+  pushing = true;
+  try {
+    const r = await fetch("/api/brain", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        w: u8b64(quantize(B.kmW)),
+        base: u8b64(quantize(baseline)),
+        elo: stats.elo, bench: stats.bench,
+        zMean: brain.zMean, zVar: brain.zVar,
+        history: eloHistory.slice(-260),
+      }),
+    });
+    if (r.ok) {
+      const d = await r.json().catch(() => null);
+      if (d && typeof d.games === "number") stats.games = d.games;
+      baseline.set(B.kmW);          // from here on, only new learning is sent
+      paintStats();
+    } else if (r.status === 400 || r.status === 409) {
+      canWrite = false; paintStats();
+    }
+  } catch (e) { /* offline: the browser copy carries on */ }
+  pushing = false;
+}
+function persist() { saveLocal(); pushShared(); }
+
+/* ------------------------------------------------------------- viewer -- */
+const cv = $("brain"), cx = cv.getContext("2d");
+const mcv = $("mbon"), mcx = mcv.getContext("2d");
+let pulse = 0;
+function fit() {
+  const w = cv.clientWidth || 900;
+  cv.width = w * 2; cv.height = 760;
+  cx.setTransform(2, 0, 0, 2, 0, 0); paint();
+}
+function place(x, y, w, h, pad) { return [pad + x / 1000 * (w - 2 * pad), pad + y / 1000 * (h - 2 * pad)]; }
+function paint() {
+  const w = cv.width / 2, h = cv.height / 2, pad = 18;
+  cx.clearRect(0, 0, w, h);
+  cx.fillStyle = "#222b38";
+  for (let i = 0; i < B.nKc; i++) {
+    const [x, y] = place(B.kcXY[i * 2], B.kcXY[i * 2 + 1], w, h, pad);
+    cx.fillRect(x, y, 1.5, 1.5);
+  }
+  const L = brain.last;
+  if (L) {
+    for (let q = 0; q < L.active.length; q++) {
+      const i = L.active[q], a = Math.min(1, L.act[q] * 0.5 + 0.35);
+      const [x, y] = place(B.kcXY[i * 2], B.kcXY[i * 2 + 1], w, h, pad);
+      cx.fillStyle = `rgba(143,214,255,${a})`;
+      cx.beginPath(); cx.arc(x, y, 1.9 + a * 1.5, 0, 6.283); cx.fill();
+    }
+    let mx = 1; for (const r of L.mbon) mx = Math.max(mx, Math.abs(r));
+    for (let j = 0; j < B.nMbon; j++) {
+      const [x, y] = place(B.mbonXY[j * 2], B.mbonXY[j * 2 + 1], w, h, pad);
+      const s = Math.min(1, Math.abs(L.mbon[j]) / mx);
+      cx.beginPath(); cx.arc(x, y, 3 + s * 5.5, 0, 6.283);
+      cx.fillStyle = B.sign[j] > 0 ? `rgba(90,209,160,${.25 + s * .75})`
+                                   : `rgba(224,103,79,${.25 + s * .75})`;
+      cx.fill();
+    }
+  }
+  if (pulse > 0) {
+    cx.fillStyle = `rgba(255,210,63,${pulse * 0.16})`; cx.fillRect(0, 0, w, h);
+    pulse -= 0.02; if (pulse > 0) requestAnimationFrame(paint);
+  }
+}
+function paintMbon() {
+  const L = brain.last, w = mcv.width, h = mcv.height;
+  mcx.clearRect(0, 0, w, h); if (!L) return;
+  let mx = 1; for (const r of L.mbon) mx = Math.max(mx, Math.abs(r));
+  const bw = w / B.nMbon;
+  for (let j = 0; j < B.nMbon; j++) {
+    const bh = Math.abs(L.mbon[j]) / mx * (h / 2 - 2);
+    mcx.fillStyle = B.sign[j] > 0 ? "#5ad1a0" : "#e0674f";
+    mcx.fillRect(j * bw, h / 2 - (B.sign[j] > 0 ? bh : 0), Math.max(1, bw - 1), bh);
+  }
+  mcx.strokeStyle = "#242a34"; mcx.beginPath();
+  mcx.moveTo(0, h / 2); mcx.lineTo(w, h / 2); mcx.stroke();
+}
+function show() {
+  paint(); paintMbon();
+  if (brain.last) setMeter("vbar", "vnum", brain.last.v, 1);
+  setMeter("dbar", "dnum", brain.dopamine, 1);
+}
+function setMeter(id, numId, v, max) {
+  const f = $(id), n = $(numId), p = Math.max(-1, Math.min(1, v / max));
+  f.classList.toggle("neg", p < 0);
+  f.style.left = (p < 0 ? 50 + p * 50 : 50) + "%";
+  f.style.width = Math.abs(p) * 50 + "%";
+  n.textContent = (v >= 0 ? "+" : "") + v.toFixed(3);
+}
+function setStatus(h) { $("status").innerHTML = h; }
+function flood() {
+  pulse = 1; paint();
+  const f = $("flood"), t = $("floodtxt");
+  f.classList.remove("go"); t.classList.remove("go");
+  void f.offsetWidth; void t.offsetWidth;
+  f.classList.add("go"); t.classList.add("go");
+}
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const frame = () => new Promise(r => requestAnimationFrame(() => r()));  // painting only
+// Training must not ride requestAnimationFrame: a hidden or backgrounded tab
+// throttles it to a crawl, and a run that measured 0.5 s of actual work took
+// 20 s of wall clock because of it. setTimeout keeps going when the page is
+// not being painted, which is exactly when someone leaves this training.
+const tick = () => new Promise(r => setTimeout(r, 0));
+
+/* ------------------------------------------------------------ control -- */
+function newGame(humanWhite) {
+  $("newW").classList.toggle("on", humanWhite);
+  $("newB").classList.toggle("on", !humanWhite);
+  game = new Chess(); flyIsWhite = !humanWhite; flipped = !humanWhite;
+  sel = null; lastMove = null; over = false; pending = false; busy = false;
+  promoPending = null; $("promo").classList.remove("on");
+  brain.startGame(); lastMaterial = material(game, flyIsWhite);
+  $("pgnbox").classList.remove("on");
+  buildBoard(); draw();
+  if (flyIsWhite) flyMove(); else setStatus("Your move.");
+}
+$("newW").onclick = () => newGame(true);
+$("newB").onclick = () => newGame(false);
+$("flip").onclick = () => { flipped = !flipped; buildBoard(); draw(); };
+$("forget").onclick = () => {
+  B.kmW.set(B.kmW0); baseline.set(B.kmW0);
+  brain.zMean = B.zMean; brain.zVar = (B.norm / 3) ** 2; brain.norm = B.norm;
+  stats = { games: 0, elo: B.elo, bench: { random:{s:0,n:0}, greedy:{s:0,n:0} } };
+  rec = { w:0, d:0, l:0 };
+  eloHistory = []; trainStats = { games:0, wins:0, drills:0, mates:0 };
+  drawChart();
+  try { localStorage.removeItem(KEY + ".w"); localStorage.removeItem(KEY + ".m"); } catch (e) {}
+  paintStats();
+  setStatus("Forgotten — back to the fly it was trained to be.");
+};
+addEventListener("resize", fit);
+
+window.flychess = {
+  get game(){ return game; }, get brain(){ return brain; }, get B(){ return B; },
+  get busy(){ return busy; }, get over(){ return over; }, get stats(){ return stats; },
+  play(san){ const m = game.moves({verbose:true}).find(x => x.san === san); if (m) human(m); },
+  playRandom(){ const ms = game.moves({verbose:true});
+    if (ms.length && !busy && !over) human(ms[Math.floor(Math.random()*ms.length)]); },
+  setPosition(fen, flyWhite){
+    game = new Chess(fen); flyIsWhite = !!flyWhite; flipped = !flyWhite;
+    sel = null; lastMove = null; over = false; pending = false; busy = false;
+    brain.startGame(); lastMaterial = material(game, flyIsWhite);
+    $("pgnbox").classList.remove("on"); buildBoard(); draw();
+    if (game.game_over()) finish();
+    else if ((game.turn() === "w") === flyIsWhite) flyMove();
+    else setStatus("Your move.");
+  },
+  measure,
+  get history(){ return eloHistory; },
+  get training(){ return training; },
+  redraw(){ drawChart(); },
+};
+
+
+/* ------------------------------------------------------------- sound -- */
+// Synthesised, not sampled: the artifact sandbox blocks external media, so
+// every sound here is built from an oscillator and a noise buffer.
+let audioOn = true, actx = null;
+function ac() {
+  if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); }
+               catch (e) { actx = null; } }
+  if (actx && actx.state === "suspended") actx.resume();
+  return actx;
+}
+function tone(freq, dur, gain, type) {
+  const c = ac(); if (!c) return;
+  const t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+  o.type = type || "triangle";
+  o.frequency.setValueAtTime(freq, t);
+  o.frequency.exponentialRampToValueAtTime(Math.max(freq * 0.5, 40), t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(gain, t + 0.004);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+function knock(dur, gain, freq) {
+  const c = ac(); if (!c) return;
+  const n = Math.max(1, Math.floor(c.sampleRate * dur));
+  const buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+  const src = c.createBufferSource(); src.buffer = buf;
+  const bp = c.createBiquadFilter(); bp.type = "bandpass";
+  bp.frequency.value = freq; bp.Q.value = 1.1;
+  const g = c.createGain(); g.gain.value = gain;
+  src.connect(bp); bp.connect(g); g.connect(c.destination); src.start();
+}
+function sfx(kind) {
+  if (!audioOn) return;
+  if (kind === "move") { knock(0.045, 0.20, 430); tone(210, 0.05, 0.07); }
+  else if (kind === "capture") { knock(0.075, 0.30, 250); tone(135, 0.09, 0.12); }
+  else if (kind === "castle") { knock(0.045, 0.18, 430); setTimeout(() => knock(0.045, 0.18, 380), 85); }
+  else if (kind === "check") { tone(900, 0.08, 0.09, "square"); setTimeout(() => tone(1200, 0.09, 0.09, "square"), 85); }
+  else if (kind === "win") [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => tone(f, 0.2, 0.085), i * 90));
+  else if (kind === "lose") [392, 330, 262].forEach((f, i) => setTimeout(() => tone(f, 0.26, 0.085), i * 125));
+}
+function moveSfx(mv, g) {
+  if (g.in_checkmate()) return;                 // win/lose covers it
+  if (g.in_check()) { sfx("check"); return; }
+  const fl = mv.flags || "";
+  if (fl.includes("k") || fl.includes("q")) { sfx("castle"); return; }
+  sfx(mv.captured ? "capture" : "move");
+}
+
+/* --------------------------------------------------------- animation -- */
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+function slide(from, to) {
+  if (reduceMotion.matches) return;
+  const fs = document.querySelector(`.sq[data-sq="${from}"]`);
+  const ts = document.querySelector(`.sq[data-sq="${to}"]`);
+  if (!fs || !ts) return;
+  const p = ts.querySelector(".p"); if (!p) return;
+  const a = fs.getBoundingClientRect(), b = ts.getBoundingClientRect();
+  const dx = a.left - b.left, dy = a.top - b.top;
+  if (!dx && !dy) return;
+  p.classList.add("moving");
+  p.style.transition = "none";
+  p.style.transform = `translate(${dx}px, ${dy}px)`;
+  requestAnimationFrame(() => {
+    p.style.transition = "transform .17s cubic-bezier(.22,.61,.36,1)";
+    p.style.transform = "translate(0,0)";
+    setTimeout(() => {
+      p.classList.remove("moving"); p.style.transition = ""; p.style.transform = "";
+    }, 210);
+  });
+}
+function played(mv) { draw(); slide(mv.from, mv.to); moveSfx(mv, game); }
+
+/* ------------------------------------------------------ auto-training -- */
+// Mirrors mbchess/train.py: one full game against a bot, then twenty mate
+// drills. The ratio is not cosmetic -- a full game makes ~30 dopamine events
+// and only its last is about winning, so without the drills the fly's
+// checkmate rate collapses (see CHESS.md).
+const TRAIN_T = 0.3, DRILLS_PER_GAME = 20, SYNC_EVERY = 10;
+let training = false, trainStats = { games: 0, wins: 0, drills: 0, mates: 0 };
+let matePool = [];
+
+function pickSoftmax(scored, T) {
+  if (T <= 0) { let b = scored[0]; for (const s of scored) if (s[1] > b[1]) b = s; return b[0]; }
+  let mx = -Infinity; for (const s of scored) mx = Math.max(mx, s[1]);
+  const w = scored.map(s => Math.exp((s[1] - mx) / T));
+  let sum = 0; for (const x of w) sum += x;
+  let r = Math.random() * sum;
+  for (let i = 0; i < scored.length; i++) { r -= w[i]; if (r <= 0) return scored[i][0]; }
+  return scored[scored.length - 1][0];
+}
+function endgameFen(flyWhite, mateIn1) {
+  for (let t = 0; t < 300; t++) {
+    const a = Math.floor(Math.random() * 64), b = Math.floor(Math.random() * 64),
+          c = Math.floor(Math.random() * 64);
+    if (a === b || b === c || a === c) continue;
+    // kings may not stand next to each other
+    if (Math.max(Math.abs((a & 7) - (b & 7)), Math.abs((a >> 3) - (b >> 3))) <= 1) continue;
+    const arr = Array(64).fill("");
+    const heavy = Math.random() < 0.5 ? "q" : "r";
+    arr[a] = flyWhite ? "K" : "k";
+    arr[b] = flyWhite ? "k" : "K";
+    arr[c] = flyWhite ? heavy.toUpperCase() : heavy;
+    let body = "";
+    for (let r = 7; r >= 0; r--) {
+      let empty = 0;
+      for (let f = 0; f < 8; f++) {
+        const p = arr[r * 8 + f];
+        if (!p) empty++; else { if (empty) { body += empty; empty = 0; } body += p; }
+      }
+      if (empty) body += empty;
+      if (r) body += "/";
+    }
+    const turn = flyWhite ? "w" : "b";
+    const fen = `${body} ${turn} - - 0 1`;
+    let g;
+    try { g = new Chess(fen); } catch (e) { continue; }
+    if (!g || !g.fen() || g.game_over()) continue;
+    // the side NOT to move must not already be in check, or the position is illegal
+    let other; try { other = new Chess(`${body} ${flyWhite ? "b" : "w"} - - 0 1`); } catch (e) { continue; }
+    if (!other || other.in_check()) continue;
+    if (mateIn1) {
+      let has = false;
+      for (const m of g.moves({ verbose: true })) {
+        g.move(m); if (g.in_checkmate()) has = true; g.undo();
+        if (has) break;
+      }
+      if (!has) continue;
+    }
+    return fen;
+  }
+  return null;
+}
+function topUpMatePool(n) {
+  // ~1.3% of random king-and-heavy-piece positions have mate on the board, so
+  // each one costs a few hundred rejected candidates. The pool is filled a
+  // little at a time and reused, rather than generated inside the drill loop.
+  for (let i = 0; i < n && matePool.length < 140; i++) {
+    const f = endgameFen(Math.random() < 0.5, true);
+    if (f) matePool.push(f);
+  }
+}
+function mateDrill() {
+  if (!matePool.length) { topUpMatePool(4); if (!matePool.length) return; }
+  const fen = matePool[Math.floor(Math.random() * matePool.length)];
+  const g = new Chess(fen), flyWhite = g.turn() === "w";
+  brain.startGame();
+  const sc = scoreMoves(g, flyWhite);
+  if (!sc.length) return;
+  const mv = pickSoftmax(sc, TRAIN_T);
+  g.move(mv);
+  brain.evaluate(encode(canonical(g, flyWhite), B), true);
+  const won = g.in_checkmate();
+  brain.reinforce(won ? 1 : -0.2, 0, true, won ? WIN_DOPAMINE : 1);
+  trainStats.drills++; if (won) trainStats.mates++;
+}
+async function trainGame(kind) {
+  const g = new Chess(), flyWhite = Math.random() < 0.5;
+  brain.startGame();
+  const mat0 = material(g, flyWhite);
+  let lastMat = mat0, pend = false;
+  for (let ply = 0; ply < 120 && !g.game_over() && training; ply++) {
+    if ((g.turn() === "w") === flyWhite) {
+      const sc = scoreMoves(g, flyWhite);
+      if (!sc.length) break;
+      let best = -Infinity; for (const s of sc) best = Math.max(best, s[1]);
+      if (pend) {
+        const m = material(g, flyWhite);
+        brain.reinforce(Math.tanh((m - lastMat) / 3) * SHAPING, best, false, 1);
+        lastMat = m;
+      }
+      const mv = pickSoftmax(sc, TRAIN_T);
+      g.move(mv);
+      brain.evaluate(encode(canonical(g, flyWhite), B), true);
+      pend = true;
+    } else {
+      const m = kind === "greedy" ? greedyMove(g, B) : randomMove(g);
+      if (!m) break;
+      g.move(m);
+    }
+    if (ply % 6 === 0) await tick();
+  }
+  let result = 0;
+  if (g.in_checkmate()) result = (g.turn() === "w") !== flyWhite ? 1 : -1;
+  const edge = material(g, flyWhite);
+  let r;
+  if (result !== 0) r = result > 0 ? 1 : -1;
+  else if (g.game_over()) r = DRAW_REWARD;
+  else r = Math.tanh((edge - mat0) / 6) * 0.5;   // progress, not position
+  if (pend) brain.reinforce(r, 0, true, result > 0 ? WIN_DOPAMINE : 1);
+  if (result > 0) trainStats.wins++;
+  return result;
+}
+async function trainLoop() {
+  while (training) {
+    await trainGame(trainStats.games % 2 ? "greedy" : "random");
+    trainStats.games++;
+    for (let i = 0; i < DRILLS_PER_GAME && training; i++) {
+      mateDrill();
+      if (i % 10 === 0) await tick();
+    }
+    topUpMatePool(1);
+    $("trainstat").textContent =
+      `${trainStats.games} games · ${trainStats.wins} won · ` +
+      `${trainStats.mates}/${trainStats.drills} drills mated · ` +
+      `memory ${(brain.learnedFraction() * 100).toFixed(2)}%`;
+    paintStats();
+    if (trainStats.games % SYNC_EVERY === 0 && training) {
+      await measure(3, true);      // re-rate, which also plots a point
+      saveLocal();
+      await pushShared();
+    }
+    await tick();
+  }
+}
+function setTraining(on) {
+  training = on;
+  $("train").textContent = on ? "Stop training" : "Train against bots";
+  $("train").classList.toggle("live", on);
+  $("trainrow").hidden = !on;
+  if (on) { ac(); topUpMatePool(8); trainLoop(); }
+  else { saveLocal(); pushShared(); }
+}
+$("train").onclick = () => setTraining(!training);
+$("sound").onclick = () => {
+  audioOn = !audioOn;
+  $("sound").textContent = "Sound: " + (audioOn ? "on" : "off");
+  if (audioOn) { ac(); sfx("move"); }
+};
+
+/* --------------------------------------------------- elo over time ---- */
+let eloHistory = [];
+function pushElo() {
+  if (stats.elo == null) return;
+  const last = eloHistory[eloHistory.length - 1];
+  const g = stats.games + trainStats.games;
+  if (last && last.g === g && last.elo === stats.elo) return;
+  eloHistory.push({ g, elo: stats.elo });
+  if (eloHistory.length > 400) eloHistory = eloHistory.filter((_, i) => i % 2 === 0);
+  drawChart();
+}
+let hoverIdx = -1;
+function drawChart() {
+  const cv = $("eloChart"), cx = cv.getContext("2d");
+  const w = cv.clientWidth || 480, h = 190;
+  cv.width = w * 2; cv.height = h * 2; cx.setTransform(2, 0, 0, 2, 0, 0);
+  cx.clearRect(0, 0, w, h);
+  $("chartnote").style.display = eloHistory.length > 1 ? "none" : "";
+  if (eloHistory.length < 2) return;
+  const pad = { l: 40, r: 14, t: 12, b: 24 };
+  const xs = eloHistory.map(p => p.g), ys = eloHistory.map(p => p.elo);
+  const x0 = Math.min(...xs), x1 = Math.max(x0 + 1, Math.max(...xs));
+  let lo = Math.min(...ys), hi = Math.max(...ys);
+  const span = Math.max(hi - lo, 40);
+  lo = Math.floor((lo - span * 0.18) / 25) * 25;
+  hi = Math.ceil((hi + span * 0.18) / 25) * 25;
+  const X = g => pad.l + (g - x0) / (x1 - x0) * (w - pad.l - pad.r);
+  const Y = e => pad.t + (1 - (e - lo) / (hi - lo)) * (h - pad.t - pad.b);
+
+  cx.font = "10px ui-sans-serif,-apple-system,sans-serif";
+  cx.strokeStyle = "#242a34"; cx.lineWidth = 1;
+  cx.fillStyle = "#93a0b4"; cx.textAlign = "right"; cx.textBaseline = "middle";
+  for (let i = 0; i <= 4; i++) {
+    const e = lo + (hi - lo) * i / 4, y = Y(e);
+    cx.beginPath(); cx.moveTo(pad.l, y); cx.lineTo(w - pad.r, y); cx.stroke();
+    cx.fillText(Math.round(e), pad.l - 6, y);
+  }
+  cx.textBaseline = "top";
+  cx.textAlign = "left"; cx.fillText(fmtG(x0), pad.l, h - pad.b + 6);
+  cx.textAlign = "right"; cx.fillText(fmtG(x1) + " games", w - pad.r, h - pad.b + 6);
+
+  cx.strokeStyle = "#7fb2f0"; cx.lineWidth = 2;
+  cx.lineJoin = "round"; cx.lineCap = "round";
+  cx.beginPath();
+  eloHistory.forEach((p, i) => i ? cx.lineTo(X(p.g), Y(p.elo)) : cx.moveTo(X(p.g), Y(p.elo)));
+  cx.stroke();
+
+  const last = eloHistory[eloHistory.length - 1];
+  cx.beginPath(); cx.arc(X(last.g), Y(last.elo), 4, 0, 6.283);
+  cx.fillStyle = "#7fb2f0"; cx.fill();
+  cx.lineWidth = 2; cx.strokeStyle = "#171a21"; cx.stroke();   // 2px surface ring
+
+  if (hoverIdx >= 0 && hoverIdx < eloHistory.length) {
+    const p = eloHistory[hoverIdx], x = X(p.g), y = Y(p.elo);
+    cx.strokeStyle = "#39445400"; cx.strokeStyle = "rgba(127,178,240,.35)";
+    cx.lineWidth = 1; cx.beginPath();
+    cx.moveTo(x, pad.t); cx.lineTo(x, h - pad.b); cx.stroke();
+    cx.beginPath(); cx.arc(x, y, 4.5, 0, 6.283);
+    cx.fillStyle = "#7fb2f0"; cx.fill();
+    cx.lineWidth = 2; cx.strokeStyle = "#171a21"; cx.stroke();
+  }
+}
+function fmtG(n) { return n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + "k" : String(n); }
+(function chartHover() {
+  const cv = $("eloChart"), tip = $("tip");
+  cv.addEventListener("mousemove", e => {
+    if (eloHistory.length < 2) return;
+    const r = cv.getBoundingClientRect();
+    const w = r.width, pad = { l: 40, r: 14 };
+    const xs = eloHistory.map(p => p.g);
+    const x0 = Math.min(...xs), x1 = Math.max(x0 + 1, Math.max(...xs));
+    const gx = x0 + (e.clientX - r.left - pad.l) / (w - pad.l - pad.r) * (x1 - x0);
+    let best = 0, bd = Infinity;
+    eloHistory.forEach((p, i) => { const d = Math.abs(p.g - gx); if (d < bd) { bd = d; best = i; } });
+    hoverIdx = best; drawChart();
+    const p = eloHistory[best];
+    tip.innerHTML = `<b>Elo ${p.elo}</b> after ${p.g.toLocaleString()} games`;
+    tip.style.left = (pad.l + (p.g - x0) / (x1 - x0) * (w - pad.l - pad.r)) + "px";
+    tip.style.top = "26px";
+    tip.classList.add("on");
+  });
+  cv.addEventListener("mouseleave", () => {
+    hoverIdx = -1; tip.classList.remove("on"); drawChart();
+  });
+})();
+
+/* ------------------------------------------------------ leaderboard -- */
+/* ------------------------------------------------------ leaderboard -- */
+// Google sign-in. The credential is verified by /api/scores against Google
+// before anything is written, and the name stored is the one in that verified
+// token -- never a name the browser supplied.
+let credential = null, myName = null, googleClientId = "";
+async function recordResult(result) {
+  if (!credential) return;
+  try {
+    await fetch("/api/scores", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ credential, result }),
+    });
+  } catch (e) { /* the game still counted for the fly */ }
+}
+async function loadLeaderboard() {
+  let data = null;
+  try {
+    const r = await fetch("/api/scores", { cache: "no-store" });
+    if (!r.ok) return;
+    data = await r.json();
+  } catch (e) { return; }
+  if (data.clientId && data.clientId !== googleClientId) {
+    googleClientId = data.clientId;
+    initGoogle();
+  }
+  const rows = (data.players || []).slice(0, 12);
+  const box = $("lb");
+  if (!rows.length) {
+    box.innerHTML = '<div class="empty">Nobody has beaten it yet. Sign in and' +
+                    ' take the top seat.</div>';
+    return;
+  }
+  box.innerHTML =
+    '<table><thead><tr><th class="rank"></th><th class="who">Player</th>' +
+    '<th class="n">W</th><th class="n">D</th><th class="n">L</th></tr></thead><tbody>' +
+    rows.map((r, i) =>
+      `<tr${r.name === myName ? ' class="me"' : ""}><td class="rank">${i + 1}</td>` +
+      `<td class="who"></td><td class="n">${r.w}</td><td class="n">${r.d}</td>` +
+      `<td class="n">${r.l}</td></tr>`).join("") + "</tbody></table>";
+  // a display name is someone's own text: set it, never parse it as HTML
+  box.querySelectorAll("tbody tr").forEach((tr, i) => {
+    tr.querySelector(".who").textContent =
+      rows[i].name + (rows[i].name === myName ? " (you)" : "");
+  });
+}
+function onGoogleCredential(res) {
+  credential = res && res.credential;
+  if (!credential) return;
+  try {
+    const claims = JSON.parse(atob(credential.split(".")[1]));
+    myName = claims.name || claims.given_name || "Player";
+  } catch (e) { myName = "Player"; }
+  $("gbtn").hidden = true;
+  const who = $("who");
+  who.hidden = false;
+  who.textContent = "Signed in as " + myName;
+  $("signnote").textContent = "Your results go on the leaderboard from now on.";
+  loadLeaderboard();
+}
+function initGoogle() {
+  if (!googleClientId || !window.google || !google.accounts) return;
+  try {
+    google.accounts.id.initialize({
+      client_id: googleClientId,
+      callback: onGoogleCredential,
+    });
+    google.accounts.id.renderButton($("gbtn"),
+      { theme: "filled_black", size: "medium", text: "signin_with", shape: "pill" });
+  } catch (e) { /* sign-in simply stays unavailable */ }
+}
+window.__initGoogle = initGoogle;
+
+/* --------------------------------------------------------------- boot -- */
+// Render first, then reach for the shared brain: a slow or missing back end
+// must not keep the board off the screen.
+buildBoard();
+const gotLocal = loadLocal();
+baseline.set(B.kmW);
+function describe(where) {
+  $("sub").textContent =
+    `${B.nKc.toLocaleString()} Kenyon cells · ${B.kmW.length.toLocaleString()} learned ` +
+    `synapses · ${B.nMbon} MBONs · ${where}`;
+}
+describe(gotLocal ? "your fly, remembered" : "a freshly trained fly");
+paintStats();
+fit();
+drawChart();
+newGame(true);
+addEventListener("resize", drawChart);
+
+(async () => {
+  shared = true;
+  const got = await pullShared();
+  if (got) {
+    baseline.set(B.kmW);
+    describe("the shared fly, as everyone has taught it");
+  } else if (backendUp) {
+    baseline.set(B.kmW0);
+    describe("the shared fly, waiting for its first game");
+  } else {
+    shared = false;
+  }
+  paintStats();
+  drawChart();
+  loadLeaderboard();
+})();
+</script>
+</body>
+</html>
