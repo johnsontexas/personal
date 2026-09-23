@@ -126,19 +126,25 @@ function line(cv, series, opts) {
 }
 
 function charts() {
-  const h = meta.history.filter(p => p.loss !== null);
+  const src = liveHistory && liveHistory.at(-1).chars_seen > meta.history.at(-1).chars_seen
+    ? liveHistory : meta.history;
+  const h = src.filter(p => p.loss !== null && p.loss !== undefined);
   line($("loss"), [{ pts: h.map(p => [p.chars_seen, p.loss]), color: css("--accent") }],
     { ymin: 1.6, ymax: 3.9, ticks: [3.71, 3, 2.5, 2], fmtY: v => v.toFixed(2) });
   const tasks = Object.keys(meta.ages.at(-1).eval);
   const cols = ["--g0", "--g1", "--g2", "--c3", "--c4", "--c5", "--c6"];
   line($("curve"), tasks.map((k, i) => ({
-    pts: meta.history.map(p => [p.chars_seen, p.eval[k] ? p.eval[k].char_acc : 0]), color: css(cols[i % 7])
+    pts: src.map(p => [p.chars_seen, p.eval[k] ? p.eval[k].char_acc : 0]), color: css(cols[i % 7])
   })), { ymin: 0, ymax: 1, ticks: [0, .25, .5, .75, 1], fmtY: pct });
   $("legend").innerHTML = tasks.map((k, i) => `<span><i style="background:${css(cols[i % 7])}"></i>${k}</span>`).join("");
 }
 
-function taskTable() {
-  const ev = meta.ages[ageIdx].eval;
+function taskTable(liveStat) {
+  const ev = liveStat ? liveStat.eval : meta.ages[ageIdx].eval;
+  $("scoreNote").textContent = liveStat
+    ? `Scores from the brain as it stands right now, after ${fmt(liveStat.chars_seen)} characters ` +
+      `— newer than the brain you can talk to above, which was published at ${fmt(meta.ages[ageIdx].chars_seen)}.`
+    : `Scores for the brain you can talk to above, after ${fmt(meta.ages[ageIdx].chars_seen)} characters.`;
   $("tasks").innerHTML = Object.entries(ev).map(([k, v]) => `<tr><td>${k}</td>
     <td class="mono ex">${esc(meta.tasks[k] || "")}</td>
     <td class="num"><i class="bar"><b style="width:${v.char_acc * 100}%"></b></i>${pct(v.char_acc)}</td>
@@ -198,4 +204,45 @@ function timeMachine(i) {
   timeMachine(meta.history.length - 1);
 
   addMsg("fly", "ask me something");
+  liveStatus(); setInterval(liveStatus, 30000);
 })();
+
+/* Is the brain being trained at this very moment? The machine doing the
+   training posts a heartbeat to /api/flystatus every couple of minutes. */
+let liveHistory = null;
+
+async function liveStatus() {
+  const bar = $("livebar"), txt = $("livetxt");
+  let s = null, age = null;
+  try {
+    const r = await (await fetch("/api/flystatus", { cache: "no-store" })).json();
+    s = r.status; age = r.age_s;
+  } catch (e) { /* function not deployed yet */ }
+  const shipped = meta.ages.at(-1);
+  if (!s) {
+    bar.classList.remove("live");
+    txt.innerHTML = `this brain has trained <b>${shipped.minutes} minutes</b> and read ` +
+      `<b>${fmt(shipped.chars_seen)} characters</b> · live training status unavailable`;
+    return;
+  }
+  // the brain has kept training since this page's data was published: use the
+  // newer numbers for the scores, the curves and the latest answers
+  if (s.history && s.history.length) {
+    liveHistory = s.history.map(h => ({ chars_seen: h.c, minutes: h.m, loss: h.l,
+      eval: Object.fromEntries(Object.entries(h.e).map(([k, v]) => [k, { char_acc: v }])) }));
+    if (liveHistory.at(-1).chars_seen > meta.history.at(-1).chars_seen) charts();
+  }
+  if (s.eval && Object.keys(s.eval).length &&
+      s.chars_seen > meta.ages[ageIdx].chars_seen) taskTable(s);
+  const live = s.running && age !== null && age < 420;
+  bar.classList.toggle("live", live);
+  const ago = age < 90 ? `${age}s` : `${Math.round(age / 60)} min`;
+  if (live) {
+    txt.innerHTML = `<b>learning right now</b> &mdash; reading <b>${s.chars_per_s}</b> characters a second on a ` +
+      `laptop GPU · ${fmt(s.chars_seen)} characters so far · prediction error <b>${s.loss ? s.loss.toFixed(2) : "–"}</b> ` +
+      `(3.71 is random) · updated ${ago} ago`;
+  } else {
+    txt.innerHTML = `not training at the moment · last seen ${ago} ago after <b>${s.minutes} minutes</b> ` +
+      `and <b>${fmt(s.chars_seen)} characters</b> · the brain below is the one it had reached`;
+  }
+}

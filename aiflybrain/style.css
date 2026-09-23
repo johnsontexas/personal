@@ -102,3 +102,12 @@ h3.tm{margin-top:20px}
 .probes div{font-size:12.5px;margin:3px 0;word-break:break-word}
 .probes .q{color:var(--dim)}
 .probes b{color:var(--ink)}
+
+/* ---- "is it learning right now" badge ---- */
+.livebar{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:12.5px;
+  border:1px solid var(--line);border-radius:99px;padding:5px 12px;color:var(--dim);background:rgba(0,0,0,.2)}
+.livebar .dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex:none}
+.livebar.live .dot{background:var(--g0);animation:beat 1.6s infinite}
+.livebar.live{color:var(--ink);border-color:rgba(90,209,160,.45)}
+@keyframes beat{50%{opacity:.3}}
+.livebar b{color:var(--ink);font-weight:600}

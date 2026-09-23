@@ -26,6 +26,7 @@
 <header>
   <h1>AI Fly Brain <span>&mdash; 35,953 real neurons, spiking in your browser</span></h1>
   <div class="sub" id="sub">loading the connectome&hellip;</div>
+  <div class="livebar" id="livebar"><span class="dot"></span><span id="livetxt">checking whether it is learning right now&hellip;</span></div>
 </header>
 
 <main>
@@ -92,6 +93,7 @@
     <p class="note">Short lines, most of them small problems whose answer depends on something earlier in
       the line &mdash; so the only way to answer is to hold it in the neurons. The test problems include
       words and rules it never saw while learning.</p>
+    <p class="note" id="scoreNote"></p>
     <table class="tasks"><thead><tr><th>problem</th><th>example</th><th>letters right</th><th>answers fully right</th>
       <th>no-memory baseline</th></tr></thead><tbody id="tasks"></tbody></table>
   </section>
