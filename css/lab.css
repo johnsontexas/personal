@@ -1,0 +1,217 @@
+/* Lab: the shared look for interactive project pages (/flychess, /aiflybrain,
+   and whatever comes next). It is the main site's paper, ink and bronze, set
+   out like a printed paper: numbered sections, captioned figures, and live
+   instruments shown on dark plates.
+
+   Page skeleton:
+     body.lab
+       header.lab-top            wordmark + site nav
+       section.lab-mast          kicker, title, dek, stat row, plate art
+       main.lab-main > section.lab-sec
+         .lab-sec-head           <span class="lab-num">01</span><h2>…</h2>
+         .panel                  a white sheet on the paper
+         figure.plate            a dark instrument, with figcaption
+       footer.lab-foot
+   Generative figures come from /js/plate.js (<canvas data-plate="…">). */
+
+:root {
+  --paper: #f6f4ef;
+  --paper-2: #efebe2;
+  --sheet: #ffffff;
+  --ink: #202b33;
+  --ink-2: #3c4650;
+  --muted: #737b83;
+  --rule: #e5ded1;
+  --rule-2: #d3c9b7;
+  --bronze: #8a5a2b;
+  --bronze-deep: #5f3d1d;
+  --bronze-wash: rgba(138, 90, 43, 0.09);
+
+  --plate: #15181c;
+  --plate-2: #1c2025;
+  --plate-rule: #2b3037;
+  --plate-ink: #e9e4d8;
+  --plate-dim: #8b8f94;
+
+  /* signal colours, chosen to read on both paper and plate */
+  --sig-in: #4fae9e;
+  --sig-core: #d98a3d;
+  --sig-out: #c9a227;
+  --sig-neg: #cc5a42;
+
+  --f-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-body: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body.lab {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink-2);
+  font: 15px/1.65 var(--f-body);
+  -webkit-font-smoothing: antialiased;
+}
+.lab a { color: var(--bronze); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.lab a:hover { color: var(--bronze-deep); }
+.lab .mono, .lab code { font-family: var(--f-mono); font-size: 0.92em; }
+.lab h1, .lab h2, .lab h3 { font-family: var(--f-display); color: var(--ink); font-weight: 400; margin: 0; }
+.lab b, .lab strong { color: var(--ink); font-weight: 700; }
+
+/* ---------------------------------------------------------------- top bar -- */
+.lab-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  flex-wrap: wrap; max-width: 1240px; margin: 0 auto; padding: 18px 28px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.lab-top .wordmark {
+  font-family: var(--f-display); font-size: 19px; color: var(--ink); text-decoration: none;
+  letter-spacing: -0.005em;
+}
+.lab-nav { display: flex; flex-wrap: wrap; gap: 6px 22px; }
+.lab-nav a {
+  color: var(--ink-2); text-decoration: none; font-size: 11.5px; font-weight: 700;
+  letter-spacing: 0.13em; text-transform: uppercase; padding: 3px 0;
+  border-bottom: 2px solid transparent;
+}
+.lab-nav a:hover { color: var(--ink); border-bottom-color: var(--rule-2); }
+.lab-nav a[aria-current] { color: var(--ink); border-bottom-color: var(--bronze); }
+
+/* ------------------------------------------------------------- masthead -- */
+.lab-mast {
+  max-width: 1240px; margin: 0 auto; padding: 48px 28px 36px;
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 44px; align-items: center;
+}
+@media (max-width: 880px) { .lab-mast { grid-template-columns: 1fr; gap: 26px; padding-top: 34px; } .lab-art { aspect-ratio: 16 / 10; } }
+.lab-kicker {
+  margin: 0 0 14px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--bronze);
+}
+.lab-kicker a { color: inherit; text-decoration: none; }
+.lab-kicker a:hover { text-decoration: underline; }
+.lab-kicker .sep { color: var(--rule-2); margin: 0 8px; }
+.lab-mast h1 { font-size: clamp(42px, 6.2vw, 74px); line-height: 1.02; letter-spacing: -0.02em; }
+.lab-dek {
+  font-family: var(--f-display); font-size: clamp(18px, 2vw, 22px); line-height: 1.45;
+  color: var(--ink-2); margin: 18px 0 0; max-width: 34em;
+}
+.lab-art {
+  width: 100%; aspect-ratio: 5 / 4; display: block; border-radius: 3px;
+  border: 1px solid var(--rule); background: var(--sheet);
+}
+.lab-art[data-tone="dark"] { border-color: var(--plate); }
+
+.lab-stats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  margin: 28px 0 0; border-top: 1px solid var(--rule);
+}
+.lab-stats div { padding: 12px 16px 0 0; }
+.lab-stats div + div { padding-left: 16px; border-left: 1px solid var(--rule); }
+.lab-stats dt {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted);
+}
+.lab-stats dd {
+  margin: 4px 0 0; font-family: var(--f-mono); font-size: 21px; color: var(--ink);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+}
+.lab-status { margin-top: 18px; font-size: 13px; color: var(--muted); }
+.lab-status b { color: var(--ink); }
+
+/* ---------------------------------------------------------------- body -- */
+.lab-main { max-width: 1240px; margin: 0 auto; padding: 0 28px 40px; }
+.lab-sec { padding: 40px 0 8px; border-top: 1px solid var(--rule); }
+.lab-sec + .lab-sec { margin-top: 12px; }
+.lab-sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+.lab-num { font-family: var(--f-mono); font-size: 12px; color: var(--bronze); letter-spacing: 0.04em; }
+.lab-sec-head h2 { font-size: clamp(24px, 2.8vw, 32px); line-height: 1.15; letter-spacing: -0.01em; }
+.lab-sec-head .aside { margin-left: auto; font-size: 13px; color: var(--muted); }
+.lab-prose { max-width: 68ch; }
+.lab-prose p { margin: 0 0 14px; }
+.lab-prose p:last-child { margin-bottom: 0; }
+.lab-note { font-size: 13px; color: var(--muted); margin: 0 0 12px; max-width: 72ch; }
+
+.lab-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0; }
+.lab-cols > div { padding: 4px 22px 4px 0; }
+.lab-cols > div + div { padding-left: 22px; border-left: 1px solid var(--rule); }
+@media (max-width: 700px) { .lab-cols > div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--rule); padding-top: 14px; margin-top: 10px; } }
+.lab-cols h3 { font-size: 18px; margin-bottom: 6px; }
+.lab-cols p { margin: 0; font-size: 14px; }
+.lab-step { font-family: var(--f-mono); font-size: 11px; color: var(--bronze); display: block; margin-bottom: 4px; }
+
+/* a white sheet laid on the paper */
+.panel {
+  background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 20px 22px;
+}
+.panel-title {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 12px; font-family: var(--f-body);
+}
+.panel + .panel-title, .panel-title.gap { margin-top: 20px; }
+
+/* a dark instrument, captioned like a figure */
+figure.plate { margin: 0; }
+.plate-body {
+  position: relative; background: var(--plate); border-radius: 4px; overflow: hidden;
+  color: var(--plate-ink);
+}
+figure.plate figcaption {
+  margin-top: 9px; font-size: 12.5px; line-height: 1.5; color: var(--muted); max-width: 80ch;
+}
+figure.plate figcaption b { font-family: var(--f-mono); font-weight: 600; font-size: 11.5px; color: var(--ink); margin-right: 6px; }
+
+.keys { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted); margin-top: 8px; }
+.keys span { display: inline-flex; align-items: center; gap: 6px; }
+.keys i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+/* -------------------------------------------------------------- controls -- */
+.lab .btn, .lab button.btn {
+  font: 600 13px/1 var(--f-body); color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--rule-2); border-radius: 3px; padding: 9px 14px; cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.lab .btn:hover { border-color: var(--ink); }
+.lab .btn:focus-visible, .lab input:focus-visible, .lab select:focus-visible {
+  outline: 2px solid var(--bronze); outline-offset: 2px;
+}
+.lab .btn.on { border-color: var(--ink); box-shadow: inset 0 -2px 0 var(--bronze); }
+.lab .btn-ink { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.lab .btn-ink:hover { background: #0f161b; }
+.lab .btn:disabled { opacity: .45; cursor: default; }
+.lab .btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.lab input[type=text], .lab select, .lab textarea {
+  font: 14px var(--f-body); color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--rule-2); border-radius: 3px; padding: 8px 10px;
+}
+.lab input[type=range] { accent-color: var(--bronze); }
+
+/* a thin centred meter: approach to the right, avoid to the left */
+.meter { height: 8px; background: var(--paper-2); border-radius: 2px; overflow: hidden; position: relative; margin: 6px 0 2px; }
+.meter::after { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--rule-2); }
+.meter .fill { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; background: var(--sig-in);
+  transition: all .35s cubic-bezier(.4, 0, .2, 1); }
+.meter .fill.neg { background: var(--sig-neg); }
+.kv { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--muted); padding: 3px 0; }
+.kv .val { color: var(--ink); font-family: var(--f-mono); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+/* tables */
+.lab-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.lab-table th { text-align: left; font-size: 10.5px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted); padding: 0 10px 8px 0; border-bottom: 1px solid var(--ink); }
+.lab-table td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.lab-table td.num, .lab-table th.num { text-align: right; white-space: nowrap; }
+.lab-table td.num { font-family: var(--f-mono); font-size: 13px; }
+
+/* ----------------------------------------------------------------- foot -- */
+.lab-foot {
+  max-width: 1240px; margin: 20px auto 0; padding: 22px 28px 40px; border-top: 1px solid var(--rule);
+  display: flex; flex-wrap: wrap; gap: 10px 28px; justify-content: space-between;
+  font-size: 12.5px; color: var(--muted);
+}
+.lab-foot a { color: var(--ink-2); }
+.lab-refs { max-width: 72ch; }
+
+@media (max-width: 600px) {
+  .lab-top, .lab-mast, .lab-main, .lab-foot { padding-left: 18px; padding-right: 18px; }
+  .panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .meter .fill { transition: none; } }

@@ -70,7 +70,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 function addMsg(role, text) {
   const d = document.createElement("div");
   d.className = "msg " + role;
-  d.innerHTML = `<i>${role === "you" ? "you" : "fly brain"}</i><span class="txt mono">${esc(text)}</span>`;
+  d.innerHTML = `<i>${role === "you" ? "You" : "Fly brain"}</i><span class="txt mono">${esc(text)}</span>`;
   $("msgs").appendChild(d);
   $("msgs").scrollTop = $("msgs").scrollHeight;
   return d.querySelector(".txt");
@@ -110,7 +110,7 @@ function line(cv, series, opts) {
   const Wc = cv.width - padL - 8 * d, Hc = cv.height - padB - padT;
   const xmax = Math.max(1, ...series.flatMap(s => s.pts.map(p => p[0])));
   const X = v => padL + v / xmax * Wc, Y = v => padT + Hc * (1 - (v - opts.ymin) / (opts.ymax - opts.ymin));
-  x.font = `${10 * d}px ui-sans-serif`; x.lineWidth = d;
+  x.font = `${10 * d}px "IBM Plex Mono", ui-monospace, monospace`; x.lineWidth = d;
   for (const t of opts.ticks) {
     x.strokeStyle = css("--line"); x.beginPath(); x.moveTo(padL, Y(t)); x.lineTo(padL + Wc, Y(t)); x.stroke();
     x.fillStyle = css("--dim"); x.fillText(opts.fmtY(t), 2 * d, Y(t) + 3.5 * d);
@@ -142,9 +142,9 @@ function charts() {
 function taskTable(liveStat) {
   const ev = liveStat ? liveStat.eval : meta.ages[ageIdx].eval;
   $("scoreNote").textContent = liveStat
-    ? `Scores from the brain as it stands right now, after ${fmt(liveStat.chars_seen)} characters ` +
-      `— newer than the brain you can talk to above, which was published at ${fmt(meta.ages[ageIdx].chars_seen)}.`
-    : `Scores for the brain you can talk to above, after ${fmt(meta.ages[ageIdx].chars_seen)} characters.`;
+    ? `Scores from the latest training run, at ${fmt(liveStat.chars_seen)} characters. The ` +
+      `checkpoint in the chat above is older (${fmt(meta.ages[ageIdx].chars_seen)} characters).`
+    : `Scores for the checkpoint in the chat above, at ${fmt(meta.ages[ageIdx].chars_seen)} characters.`;
   $("tasks").innerHTML = Object.entries(ev).map(([k, v]) => `<tr><td>${k}</td>
     <td class="mono ex">${esc(meta.tasks[k] || "")}</td>
     <td class="num"><i class="bar"><b style="width:${v.char_acc * 100}%"></b></i>${pct(v.char_acc)}</td>
@@ -169,18 +169,18 @@ function timeMachine(i) {
 
   $("nN").textContent = meta.N.toLocaleString();
   $("nE").textContent = meta.E.toLocaleString();
-  $("nS").textContent = (meta.n_syn / 1e6).toFixed(1) + " million";
+  $("nS").textContent = (meta.n_syn / 1e6).toFixed(1) + "M";
   $("age").innerHTML = meta.ages.map((a, i) =>
     `<option value="${i}">${fmt(a.chars_seen)} chars · ${a.minutes} min</option>`).join("");
   $("age").value = ageIdx = meta.ages.length - 1;
 
   const loadAge = async i => {
     ageIdx = +i;
-    $("sub").textContent = "loading brain age…";
+    $("sub").textContent = "Loading checkpoint…";
     brain.setAge(await (await fetch(D + meta.ages[ageIdx].file)).arrayBuffer());
     const a = meta.ages[ageIdx];
-    $("sub").innerHTML = `${meta.N.toLocaleString()} neurons · ${meta.E.toLocaleString()} real connections · ` +
-      `this brain has read ${fmt(a.chars_seen)} characters in ${a.minutes} minutes of training`;
+    $("sub").innerHTML = `Loaded checkpoint: <b>${fmt(a.chars_seen)}</b> characters read over ` +
+      `<b>${a.minutes}</b> minutes of training.`;
     taskTable();
   };
   await loadAge(ageIdx);
@@ -196,14 +196,14 @@ function timeMachine(i) {
   $("form").onsubmit = e => { e.preventDefault(); const v = $("inp").value; $("inp").value = ""; ask(v); };
 
   charts();
-  $("growNote").textContent = `Every checkpoint of this brain's life, ${meta.history.length} in all. ` +
-    `It starts knowing nothing: no letters, no words, no idea that a question wants an answer.`;
+  $("growNote").textContent = `${meta.history.length} checkpoints, from random weights to now. At the start it knows ` +
+    `no letters, no words, and nothing about questions.`;
   $("scrub").max = meta.history.length - 1;
   $("scrub").value = meta.history.length - 1;
   $("scrub").oninput = e => timeMachine(+e.target.value);
   timeMachine(meta.history.length - 1);
 
-  addMsg("fly", "ask me something");
+  addMsg("fly", "ask me something.");
   liveStatus(); setInterval(liveStatus, 30000);
 })();
 
@@ -221,8 +221,7 @@ async function liveStatus() {
   const shipped = meta.ages.at(-1);
   if (!s) {
     bar.classList.remove("live");
-    txt.innerHTML = `this brain has trained <b>${shipped.minutes} minutes</b> and read ` +
-      `<b>${fmt(shipped.chars_seen)} characters</b> · live training status unavailable`;
+    txt.innerHTML = `Live training status unavailable.`;
     return;
   }
   // the brain has kept training since this page's data was published: use the
@@ -238,11 +237,10 @@ async function liveStatus() {
   bar.classList.toggle("live", live);
   const ago = age < 90 ? `${age}s` : `${Math.round(age / 60)} min`;
   if (live) {
-    txt.innerHTML = `<b>learning right now</b> &mdash; reading <b>${s.chars_per_s}</b> characters a second on a ` +
-      `laptop GPU · ${fmt(s.chars_seen)} characters so far · prediction error <b>${s.loss ? s.loss.toFixed(2) : "–"}</b> ` +
-      `(3.71 is random) · updated ${ago} ago`;
+    txt.innerHTML = `<b>Training now</b> on a laptop GPU, ${s.chars_per_s} characters/s · ` +
+      `${fmt(s.chars_seen)} read · error ${s.loss ? s.loss.toFixed(2) : "–"} · updated ${ago} ago`;
   } else {
-    txt.innerHTML = `not training at the moment · last seen ${ago} ago after <b>${s.minutes} minutes</b> ` +
-      `and <b>${fmt(s.chars_seen)} characters</b> · the brain below is the one it had reached`;
+    txt.innerHTML = `Not training right now. Last run ended ${ago} ago at ${s.minutes} minutes ` +
+      `and ${fmt(s.chars_seen)} characters.`;
   }
 }

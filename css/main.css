@@ -994,3 +994,25 @@ main > h3:first-child {
   color: var(--accent-color);
   margin-bottom: 0.5rem;
 }
+/* ---- The Lab shelf on the projects page ----
+   Cards for the interactive experiments. The cover is a <canvas data-plate>
+   drawn by /js/plate.js; reuse the same markup for future projects. */
+.lab-shelf { max-width: 1140px; margin: 3.5rem auto 0; padding: 2.5rem 20px 0; border-top: 1px solid var(--rule); }
+.lab-shelf-head { text-align: center; margin-bottom: 1.75rem; }
+.lab-shelf-head h3 { font-size: clamp(1.6rem, 3vw, 2.1rem); margin: .25rem 0 .5rem; }
+.lab-shelf-head p { margin: 0 auto; max-width: 560px; }
+.lab-shelf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+main a.lab-card, a.lab-card {
+  display: flex; flex-direction: column; text-decoration: none; color: inherit;
+  background: var(--card-bg); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+a.lab-card:hover { transform: translateY(-3px); box-shadow: 0 16px 34px var(--shadow); border-color: #d3c9b7; }
+.lab-cover { display: block; width: 100%; aspect-ratio: 16 / 9; background: #15181c; }
+.lab-card-body { padding: 20px 22px 22px; text-align: left; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.lab-card-body h4 { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; color: var(--primary-color); margin: 0; }
+.lab-card-body p { margin: 4px 0 6px; font-size: 15px; line-height: 1.6; text-align: left; max-width: none; color: var(--text-color); }
+.lab-card-meta { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 12px; color: #737b83; }
+.lab-card-go { margin-top: auto; padding-top: 10px; font-size: 12px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--accent-color); }
+a.lab-card:hover .lab-card-go { color: var(--accent-deep); }

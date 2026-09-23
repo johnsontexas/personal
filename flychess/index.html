@@ -3,144 +3,195 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fly Chess &mdash; Daniel A. Johnson</title>
+<title>Fly Chess — Daniel Johnson Quintero</title>
 <link rel="icon" type="image/x-icon" href="/images/icon.ico">
-<meta name="description" content="Play chess against a fruit fly's mushroom body: 5,177 Kenyon cells and 62,261 FlyWire synapses, learning from every game.">
+<meta name="description" content="Play chess against a fruit fly's mushroom body: 5,177 Kenyon cells and 62,261 FlyWire synapses that learn from every game.">
+<meta property="og:title" content="Fly Chess — Daniel Johnson Quintero">
+<meta property="og:description" content="Play chess against a fruit fly's mushroom body, running in your browser.">
+<meta property="og:url" content="https://johnsontexas.com/flychess/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Lato:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/lab.css">
 <link rel="stylesheet" href="/flychess/style.css">
 </head>
-<body class="flychess">
-<div id="flood"></div><div id="floodtxt">DOPAMINE</div>
+<body class="lab flychess">
+<div id="flood"></div><div id="floodtxt">Dopamine</div>
 
-<div class="fronter">
-  <h1>Fly Chess</h1>
-  <h2>A fruit fly's mushroom body, taught to play chess</h2>
-</div>
-<div class="sitenav">
-  <a href="/">Home</a>
-  <a href="/about.html">About Me</a>
-  <a href="/classes.html">Education</a>
-  <a href="/resume.html">Resume</a>
-  <a href="/projects.html">Projects</a>
-  <a href="/mentions.html">Mentions</a>
-  <a href="/contact.html">Contact</a>
-</div>
-<header>
-  <h1>Fly Chess <span>&mdash; a fruit fly's mushroom body, playing in your browser</span></h1>
-  <div class="sub" id="sub">loading the connectome&hellip;</div>
+<header class="lab-top">
+  <a class="wordmark" href="/">Daniel Johnson Quintero</a>
+  <nav class="lab-nav" aria-label="Site">
+    <a href="/">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/classes.html">Education</a>
+    <a href="/resume.html">Resume</a>
+    <a href="/projects.html" aria-current="page">Projects</a>
+    <a href="/mentions.html">Mentions</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
 </header>
 
-<main>
-  <div style="display:grid;gap:16px">
-    <div class="card">
-      <h2>Board</h2>
-      <div class="boardwrap">
-        <div id="board"></div>
-        <div id="promo"><div><div class="opts">
-          <button data-p="q" title="Queen">&#9819;</button>
-          <button data-p="r" title="Rook">&#9820;</button>
-          <button data-p="b" title="Bishop">&#9821;</button>
-          <button data-p="n" title="Knight">&#9822;</button>
-        </div><div class="lbl">Promote to</div></div></div>
-      </div>
-      <div class="bar">
-        <button id="newW" class="on">Play as White</button>
-        <button id="newB">Play as Black</button>
-        <button id="flip">Flip</button>
-        <button id="sound" title="Move sounds">Sound: on</button>
-        <button id="forget" title="Throw away what this fly has learned">Forget</button>
-      </div>
-      <div id="status">&mdash;</div>
-      <div id="pgnbox">
-        <div class="row" style="margin-bottom:6px">
-          <span>game score &mdash; paste into Lichess, chess.com or any PGN reader</span>
-          <button id="copypgn" style="padding:3px 9px;font-size:12px">Copy</button>
+<section class="lab-mast">
+  <div>
+    <p class="lab-kicker"><a href="/projects.html">Projects</a><span class="sep">/</span>Experiment 01<span class="sep">/</span>September 2026</p>
+    <h1>Fly Chess</h1>
+    <p class="lab-dek">Chess against the learning centre of a fruit fly's brain. It judges each move
+      by how the resulting position smells, and a dopamine signal adjusts its synapses after every
+      game, including yours.</p>
+    <dl class="lab-stats">
+      <div><dt>Kenyon cells</dt><dd>5,177</dd></div>
+      <div><dt>Learning synapses</dt><dd>62,261</dd></div>
+      <div><dt>Input neurons</dt><dd>685</dd></div>
+      <div><dt>Elo</dt><dd id="eloStat">—</dd></div>
+    </dl>
+    <div class="lab-status" id="sub">Loading the connectome…</div>
+  </div>
+  <canvas class="lab-art" data-plate="flychess" data-kind="calyx" data-tone="dark" data-label="A" data-live
+    aria-label="Illustration: a mushroom body, Kenyon cells feeding a bundle of fibres into output neurons"></canvas>
+</section>
+
+<main class="lab-main">
+  <section class="lab-sec" id="play">
+    <div class="lab-sec-head"><span class="lab-num">01</span><h2>Play</h2>
+      <span class="aside">Click a piece, then a square. It moves as soon as you do.</span></div>
+    <div class="game">
+      <div class="game-board">
+        <div class="panel boardpanel">
+          <div class="boardwrap">
+            <div id="board"></div>
+            <div id="promo"><div><div class="opts">
+              <button data-p="q" title="Queen">&#9819;</button>
+              <button data-p="r" title="Rook">&#9820;</button>
+              <button data-p="b" title="Bishop">&#9821;</button>
+              <button data-p="n" title="Knight">&#9822;</button>
+            </div><div class="lbl">Promote to</div></div></div>
+          </div>
+          <div id="status">&mdash;</div>
+          <div class="btn-row">
+            <button id="newW" class="btn on">Play as White</button>
+            <button id="newB" class="btn">Play as Black</button>
+            <button id="flip" class="btn">Flip board</button>
+            <button id="sound" class="btn" title="Move sounds">Sound: on</button>
+            <button id="forget" class="btn subtle" title="Throw away what this fly has learned">Reset its memory</button>
+          </div>
+          <div id="pgnbox">
+            <div class="kv" style="margin-bottom:6px">
+              <span>Game score (PGN) for Lichess, chess.com or any reader</span>
+              <button id="copypgn" class="btn btn-sm">Copy</button>
+            </div>
+            <textarea id="pgn" readonly spellcheck="false"></textarea>
+          </div>
         </div>
-        <textarea id="pgn" readonly spellcheck="false"></textarea>
+      </div>
+
+      <div class="game-side">
+        <figure class="plate">
+          <div class="plate-body"><canvas id="brain" width="900" height="380"></canvas></div>
+          <figcaption><b>Fig. 1</b>The mushroom body as it considers its move. Every point is a Kenyon
+            cell at its FlyWire position; the larger circles are output neurons.</figcaption>
+          <div class="keys">
+            <span><i style="background:#3a4048"></i>Kenyon cell, silent</span>
+            <span><i style="background:var(--sig-in)"></i>Active for this position</span>
+            <span><i style="background:#8cc38f"></i>Approach output</span>
+            <span><i style="background:var(--sig-neg)"></i>Avoid output</span>
+          </div>
+        </figure>
+
+        <div class="panel">
+          <p class="panel-title">Valence and dopamine</p>
+          <div class="kv"><span>How good the position smells</span><span class="val" id="vnum">0.00</span></div>
+          <div class="meter"><div class="fill" id="vbar"></div></div>
+          <div class="kv" style="margin-top:10px"><span>Dopamine (prediction error)</span><span class="val" id="dnum">0.00</span></div>
+          <div class="meter"><div class="fill" id="dbar" style="background:var(--sig-out)"></div></div>
+          <p class="panel-title gap">Output neuron vote</p>
+          <div class="plate-body mbonwrap"><canvas id="mbon" width="520" height="74"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">Moves it considered</p>
+          <div id="cands"><div class="lab-note">Waiting for the fly's turn…</div></div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="card">
-      <h2>Strength</h2>
-      <div class="elo"><b id="elo">&mdash;</b><span id="elowhat">not measured yet</span></div>
-      <div class="row" style="margin-top:10px"><span>games it has learned from</span>
-        <span class="val" id="games">0</span></div>
-      <div class="row"><span>memory changed</span><span class="val" id="mem">0.000%</span></div>
-      <div class="row"><span>this session, against you</span><span class="val" id="rec">0&ndash;0&ndash;0</span></div>
-      <div class="bar">
-        <button id="measure">Measure its Elo</button>
-        <button id="train">Train against bots</button>
+  <section class="lab-sec" id="strength">
+    <div class="lab-sec-head"><span class="lab-num">02</span><h2>How strong it is</h2></div>
+    <div class="twocol">
+      <div class="panel">
+        <p class="panel-title">Rating</p>
+        <div class="elo"><b id="elo">&mdash;</b><span id="elowhat">not measured yet</span></div>
+        <div class="kv"><span>Games it has learned from</span><span class="val" id="games">0</span></div>
+        <div class="kv"><span>Memory changed</span><span class="val" id="mem">0.000%</span></div>
+        <div class="kv"><span>You vs. the fly, this session</span><span class="val" id="rec">0&ndash;0&ndash;0</span></div>
+        <div class="btn-row" style="margin-top:14px">
+          <button id="measure" class="btn">Measure its Elo</button>
+          <button id="train" class="btn">Train against bots</button>
+        </div>
+        <div class="trainrow" id="trainrow" hidden>
+          <span class="pill"><i></i><span id="trainstat">starting&hellip;</span></span>
+        </div>
+        <div class="lab-note" id="memnote" style="margin-top:12px"></div>
       </div>
-      <div class="trainrow" id="trainrow" hidden>
-        <span class="pill"><i></i><span id="trainstat">starting&hellip;</span></span>
+      <figure class="plate paper-fig">
+        <div class="panel">
+          <p class="panel-title">Estimated Elo over time</p>
+          <div class="chartwrap">
+            <canvas id="eloChart"></canvas>
+            <div class="tip" id="tip"></div>
+          </div>
+          <div class="lab-note" id="chartnote" style="margin:8px 0 0">No measurements yet. Press
+            <em>Measure its Elo</em> or start training.</div>
+        </div>
+        <figcaption><b>Fig. 2</b>Measured against the same built-in opponents the trainer uses, so
+          treat it as a ballpark figure.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="lab-sec" id="board-of-players">
+    <div class="lab-sec-head"><span class="lab-num">03</span><h2>Leaderboard</h2>
+      <span class="aside">People who have beaten the fly.</span></div>
+    <div class="twocol">
+      <div class="panel">
+        <div id="lb"><div class="empty">Sign in to put your name here, then play a game.</div></div>
       </div>
-      <div class="signin" id="signin">
+      <div class="panel signin" id="signin">
+        <p class="panel-title">Your name</p>
         <div id="gbtn"></div>
         <div class="who" id="who" hidden></div>
-        <div class="note" id="signnote">Sign in with Google to put your name on
-          the leaderboard. You can play and train without it.</div>
-      </div>
-      <div class="note" id="memnote"></div>
-    </div>
-
-    <div class="card">
-      <h2>Predicted Elo as it learns</h2>
-      <div class="chartwrap">
-        <canvas id="eloChart"></canvas>
-        <div class="tip" id="tip"></div>
-      </div>
-      <div class="note" id="chartnote">No measurements yet &mdash; press
-        <em>Measure its Elo</em>, or turn on training.</div>
-    </div>
-  </div>
-
-  <div style="display:grid;gap:16px">
-    <div class="card">
-      <h2>Mushroom body &mdash; live</h2>
-      <canvas id="brain" width="900" height="380"></canvas>
-      <div class="legend">
-        <span class="key"><i style="background:#2a3442"></i>Kenyon cell (silent)</span>
-        <span class="key"><i style="background:#8fd6ff"></i>active &mdash; this position's smell</span>
-        <span class="key"><i style="background:var(--approach)"></i>approach MBON</span>
-        <span class="key"><i style="background:var(--avoid)"></i>avoidance MBON</span>
+        <div class="lab-note" id="signnote">Sign in with Google to appear on the leaderboard. You
+          can play and train without an account.</div>
       </div>
     </div>
+  </section>
 
-    <div class="grid2">
-      <div class="card">
-        <h2>Valence &amp; dopamine</h2>
-        <div class="row"><span>position valence</span><span class="val" id="vnum">0.00</span></div>
-        <div class="meter"><div class="fill" id="vbar"></div></div>
-        <div class="row" style="margin-top:12px"><span>dopamine (prediction error)</span>
-          <span class="val" id="dnum">0.00</span></div>
-        <div class="meter"><div class="fill" id="dbar" style="background:var(--da)"></div></div>
-        <h2 style="margin-top:16px">MBON vote</h2>
-        <canvas id="mbon" width="520" height="74"></canvas>
-      </div>
-
-      <div class="card">
-        <h2>What it smelled</h2>
-        <div id="cands"><div style="color:var(--dim)">waiting for the fly's turn&hellip;</div></div>
-      </div>
+  <section class="lab-sec" id="how">
+    <div class="lab-sec-head"><span class="lab-num">04</span><h2>How it chooses a move</h2></div>
+    <div class="lab-cols">
+      <div><span class="lab-step">Step 1</span><h3>Encode</h3>
+        <p>For every legal move, the position it leads to is written onto 685 antennal-lobe
+          projection neurons, the cells that carry smell into the mushroom body.</p></div>
+      <div><span class="lab-step">Step 2</span><h3>Sparsify</h3>
+        <p>The calyx keeps only the strongest 259 of the 5,177 Kenyon cells active, so each position
+          gets its own sparse code.</p></div>
+      <div><span class="lab-step">Step 3</span><h3>Vote</h3>
+        <p>The output neurons (MBONs) sum that code. Approach cells push for the move, avoidance cells
+          push against it. It plays the best-scoring move.</p></div>
+      <div><span class="lab-step">Step 4</span><h3>Learn</h3>
+        <p>Dopamine, a reward prediction error, rewrites the Kenyon cell to output synapses during
+          play. A win produces a large burst.</p></div>
     </div>
-
-    <div class="card">
-      <h2>Leaderboard &mdash; who beats the fly</h2>
-      <div id="lb"><div class="empty">Sign-in gives everyone a name here.
-        Play a game to take a seat.</div></div>
-    </div>
-  </div>
+  </section>
 </main>
 
-<footer>
-  The fly scores every legal move by encoding the position it leads to onto 685
-  antennal-lobe projection neurons, letting the calyx sparsify that to 259 of
-  5,177 Kenyon cells, and reading the MBONs' vote. It plays the best-smelling
-  move. Dopamine &mdash; reward prediction error &mdash; rewrites the
-  KC&rarr;MBON synapses as you play, and a win floods it. Wiring, synapse counts
-  and the neuron coordinates above are the FlyWire connectome. Elo is measured
-  against the same built-in opponents the trainer uses, and is a ballpark.
+<footer class="lab-foot">
+  <div class="lab-refs">Wiring, synapse counts and neuron positions are from the FlyWire connectome.
+    Everything runs in your browser; only shared learning and the leaderboard touch a server.</div>
+  <div><a href="/projects.html">← All projects</a> &nbsp;·&nbsp; <a href="/aiflybrain/">Experiment 02: AI Fly Brain</a></div>
 </footer>
 
+<script type="module" src="/js/plate.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.12.0/chess.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer
         onload="window.__initGoogle && window.__initGoogle()"></script>
@@ -414,6 +465,7 @@ $("measure").onclick = () => measure(6);
 
 function paintStats() {
   $("elo").textContent = stats.elo === null ? "—" : stats.elo;
+  $("eloStat").textContent = $("elo").textContent;
   const n = stats.bench.random.n + stats.bench.greedy.n;
   $("elowhat").textContent = stats.elo === null
     ? "press Measure to find out"
@@ -539,15 +591,16 @@ const cv = $("brain"), cx = cv.getContext("2d");
 const mcv = $("mbon"), mcx = mcv.getContext("2d");
 let pulse = 0;
 function fit() {
-  const w = cv.clientWidth || 900;
-  cv.width = w * 2; cv.height = 760;
+  // keep the original 900x380 proportions whatever width the plate is given
+  const w = cv.clientWidth || 900, h = Math.round(w * 380 / 900);
+  cv.width = w * 2; cv.height = h * 2;
   cx.setTransform(2, 0, 0, 2, 0, 0); paint();
 }
 function place(x, y, w, h, pad) { return [pad + x / 1000 * (w - 2 * pad), pad + y / 1000 * (h - 2 * pad)]; }
 function paint() {
   const w = cv.width / 2, h = cv.height / 2, pad = 18;
   cx.clearRect(0, 0, w, h);
-  cx.fillStyle = "#222b38";
+  cx.fillStyle = "#3a4048";
   for (let i = 0; i < B.nKc; i++) {
     const [x, y] = place(B.kcXY[i * 2], B.kcXY[i * 2 + 1], w, h, pad);
     cx.fillRect(x, y, 1.5, 1.5);
@@ -557,7 +610,7 @@ function paint() {
     for (let q = 0; q < L.active.length; q++) {
       const i = L.active[q], a = Math.min(1, L.act[q] * 0.5 + 0.35);
       const [x, y] = place(B.kcXY[i * 2], B.kcXY[i * 2 + 1], w, h, pad);
-      cx.fillStyle = `rgba(143,214,255,${a})`;
+      cx.fillStyle = `rgba(79,174,158,${a})`;
       cx.beginPath(); cx.arc(x, y, 1.9 + a * 1.5, 0, 6.283); cx.fill();
     }
     let mx = 1; for (const r of L.mbon) mx = Math.max(mx, Math.abs(r));
@@ -565,13 +618,13 @@ function paint() {
       const [x, y] = place(B.mbonXY[j * 2], B.mbonXY[j * 2 + 1], w, h, pad);
       const s = Math.min(1, Math.abs(L.mbon[j]) / mx);
       cx.beginPath(); cx.arc(x, y, 3 + s * 5.5, 0, 6.283);
-      cx.fillStyle = B.sign[j] > 0 ? `rgba(90,209,160,${.25 + s * .75})`
-                                   : `rgba(224,103,79,${.25 + s * .75})`;
+      cx.fillStyle = B.sign[j] > 0 ? `rgba(140,195,143,${.25 + s * .75})`
+                                   : `rgba(204,90,66,${.25 + s * .75})`;
       cx.fill();
     }
   }
   if (pulse > 0) {
-    cx.fillStyle = `rgba(255,210,63,${pulse * 0.16})`; cx.fillRect(0, 0, w, h);
+    cx.fillStyle = `rgba(201,162,39,${pulse * 0.18})`; cx.fillRect(0, 0, w, h);
     pulse -= 0.02; if (pulse > 0) requestAnimationFrame(paint);
   }
 }
@@ -582,10 +635,10 @@ function paintMbon() {
   const bw = w / B.nMbon;
   for (let j = 0; j < B.nMbon; j++) {
     const bh = Math.abs(L.mbon[j]) / mx * (h / 2 - 2);
-    mcx.fillStyle = B.sign[j] > 0 ? "#5ad1a0" : "#e0674f";
+    mcx.fillStyle = B.sign[j] > 0 ? "#8cc38f" : "#cc5a42";
     mcx.fillRect(j * bw, h / 2 - (B.sign[j] > 0 ? bh : 0), Math.max(1, bw - 1), bh);
   }
-  mcx.strokeStyle = "#242a34"; mcx.beginPath();
+  mcx.strokeStyle = "#3a4048"; mcx.beginPath();
   mcx.moveTo(0, h / 2); mcx.lineTo(w, h / 2); mcx.stroke();
 }
 function show() {
@@ -926,9 +979,9 @@ function drawChart() {
   const X = g => pad.l + (g - x0) / (x1 - x0) * (w - pad.l - pad.r);
   const Y = e => pad.t + (1 - (e - lo) / (hi - lo)) * (h - pad.t - pad.b);
 
-  cx.font = "10px ui-sans-serif,-apple-system,sans-serif";
-  cx.strokeStyle = "#242a34"; cx.lineWidth = 1;
-  cx.fillStyle = "#93a0b4"; cx.textAlign = "right"; cx.textBaseline = "middle";
+  cx.font = "10px 'IBM Plex Mono',ui-monospace,monospace";
+  cx.strokeStyle = "#e5ded1"; cx.lineWidth = 1;
+  cx.fillStyle = "#737b83"; cx.textAlign = "right"; cx.textBaseline = "middle";
   for (let i = 0; i <= 4; i++) {
     const e = lo + (hi - lo) * i / 4, y = Y(e);
     cx.beginPath(); cx.moveTo(pad.l, y); cx.lineTo(w - pad.r, y); cx.stroke();
@@ -938,7 +991,7 @@ function drawChart() {
   cx.textAlign = "left"; cx.fillText(fmtG(x0), pad.l, h - pad.b + 6);
   cx.textAlign = "right"; cx.fillText(fmtG(x1) + " games", w - pad.r, h - pad.b + 6);
 
-  cx.strokeStyle = "#7fb2f0"; cx.lineWidth = 2;
+  cx.strokeStyle = "#8a5a2b"; cx.lineWidth = 2;
   cx.lineJoin = "round"; cx.lineCap = "round";
   cx.beginPath();
   eloHistory.forEach((p, i) => i ? cx.lineTo(X(p.g), Y(p.elo)) : cx.moveTo(X(p.g), Y(p.elo)));
@@ -946,17 +999,17 @@ function drawChart() {
 
   const last = eloHistory[eloHistory.length - 1];
   cx.beginPath(); cx.arc(X(last.g), Y(last.elo), 4, 0, 6.283);
-  cx.fillStyle = "#7fb2f0"; cx.fill();
-  cx.lineWidth = 2; cx.strokeStyle = "#171a21"; cx.stroke();   // 2px surface ring
+  cx.fillStyle = "#8a5a2b"; cx.fill();
+  cx.lineWidth = 2; cx.strokeStyle = "#ffffff"; cx.stroke();   // 2px surface ring
 
   if (hoverIdx >= 0 && hoverIdx < eloHistory.length) {
     const p = eloHistory[hoverIdx], x = X(p.g), y = Y(p.elo);
-    cx.strokeStyle = "#39445400"; cx.strokeStyle = "rgba(127,178,240,.35)";
+    cx.strokeStyle = "rgba(138,90,43,.35)";
     cx.lineWidth = 1; cx.beginPath();
     cx.moveTo(x, pad.t); cx.lineTo(x, h - pad.b); cx.stroke();
     cx.beginPath(); cx.arc(x, y, 4.5, 0, 6.283);
-    cx.fillStyle = "#7fb2f0"; cx.fill();
-    cx.lineWidth = 2; cx.strokeStyle = "#171a21"; cx.stroke();
+    cx.fillStyle = "#8a5a2b"; cx.fill();
+    cx.lineWidth = 2; cx.strokeStyle = "#ffffff"; cx.stroke();
   }
 }
 function fmtG(n) { return n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + "k" : String(n); }
@@ -1064,16 +1117,14 @@ buildBoard();
 const gotLocal = loadLocal();
 baseline.set(B.kmW);
 function describe(where) {
-  $("sub").textContent =
-    `${B.nKc.toLocaleString()} Kenyon cells · ${B.kmW.length.toLocaleString()} learned ` +
-    `synapses · ${B.nMbon} MBONs · ${where}`;
+  $("sub").textContent = `${B.nMbon} output neurons (MBONs). Playing ${where}.`;
 }
-describe(gotLocal ? "your fly, remembered" : "a freshly trained fly");
+describe(gotLocal ? "the fly as you left it" : "a freshly trained fly");
 paintStats();
 fit();
 drawChart();
 newGame(true);
-addEventListener("resize", drawChart);
+addEventListener("resize", () => { drawChart(); fit(); });
 
 (async () => {
   shared = true;
