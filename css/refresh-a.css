@@ -1,0 +1,202 @@
+/* ==========================================================================
+   refresh-a.css  —  "Rule" direction
+   UI + navigation refresh, DIRECTION A.
+
+   Additive overrides only. main.css is untouched. Delete the single
+   <link> tag that loads this file and the site returns exactly to how
+   it was. Nothing here depends on the content edits, and the content
+   edits do not depend on anything here.
+
+   Fixes real defects rather than restyling what already works:
+     1. Nav wrapped to two rows and left "Media Gallery" stranded alone.
+     2. The current page was styled LIGHTER (--accent-color) than the
+        inactive links (--secondary-color), so the active item read as
+        the least important one. That is backwards.
+     3. .page at #7f8c8d with #ecf0f1 text is about 2.9:1 contrast,
+        under the WCAG AA 4.5:1 minimum for body-size text.
+     4. No :focus-visible anywhere, so keyboard users got nothing.
+     5. body font-family was 'Lato', serif — the fallback for a sans
+        typeface was a serif.
+   ========================================================================== */
+
+/* --- 1. Typeface fallback ------------------------------------------------ */
+
+body {
+  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+               Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- 2. Navigation ------------------------------------------------------- */
+/* Plain text links on a hairline rule. No fills, no pill shadows.
+   Seven items sit on one row at desktop width with room to spare. */
+
+nav {
+  max-width: 1000px;
+  margin: 0 auto 2.5rem;
+  padding: 0 20px;
+  gap: 0;
+  border-bottom: 1px solid rgba(44, 62, 80, 0.14);
+  align-items: stretch;
+}
+
+nav .button,
+nav .page {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  color: var(--secondary-color);
+  padding: 14px 16px;
+  margin-bottom: -1px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: color 0.18s ease, border-color 0.18s ease;
+  overflow: visible;
+}
+
+/* Kill the inherited hover lift and the sliding underline pseudo-element. */
+nav .button:hover,
+nav .page:hover {
+  transform: none;
+  box-shadow: none;
+  color: var(--primary-color);
+  border-bottom-color: rgba(44, 62, 80, 0.35);
+}
+
+nav .button::after,
+nav .page::after {
+  display: none;
+}
+
+/* Active page: the strongest item, not the weakest. */
+nav .page {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+/* --- 3. Focus states ----------------------------------------------------- */
+/* Visible keyboard focus everywhere it was missing. */
+
+nav .button:focus-visible,
+nav .page:focus-visible,
+.social a:focus-visible,
+main a:focus-visible,
+footer a:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* --- 4. Header rhythm ---------------------------------------------------- */
+
+.fronter2 {
+  padding: 2.25rem 10px 1.75rem;
+  margin-bottom: 0;
+  box-shadow: 0 1px 0 rgba(44, 62, 80, 0.08);
+}
+
+.fronter2 h2 {
+  margin: 0 0 0.35rem;
+  letter-spacing: 0.02em;
+}
+
+.fronter2 h3 {
+  margin: 0;
+  font-weight: 400;
+  color: var(--accent-color);
+  letter-spacing: 0.06em;
+}
+
+/* --- 5. Footer icons ----------------------------------------------------- */
+
+.social a {
+  display: inline-block;
+  opacity: 0.82;
+  transition: opacity 0.18s ease;
+}
+
+.social a:hover {
+  opacity: 1;
+}
+
+/* --- 6. Mobile ----------------------------------------------------------- */
+/* The nav becomes a single horizontal scroll row: no ragged wrapping,
+   and every target clears the 44px minimum tap height. */
+
+@media screen and (max-width: 768px) {
+  nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 0;
+    margin-bottom: 1.75rem;
+    padding: 0 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  nav .button,
+  nav .page {
+    flex: 0 0 auto;
+    padding: 13px 14px;
+    font-size: 12.5px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .fronter2 {
+    padding: 1.5rem 10px 1.25rem;
+  }
+}
+
+/* --- 7. Home page uses .fronter, not .fronter2 --------------------------- */
+
+.fronter {
+  padding: 3rem 10px 2.5rem;
+  margin-bottom: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .fronter {
+    padding: 2rem 10px 1.75rem;
+  }
+}
+
+/* --- 8. Horizontal overflow on mobile (pre-existing bug) ----------------- *
+ * .project-grid declares minmax(400px, 1fr) and, unlike .content-sections,
+ * never gets a mobile override. Below ~440px that forces a 400px track, the
+ * document grows wider than the viewport, and every page on the site can be
+ * scrolled sideways with the page title clipped at the right edge.
+ * min() caps the track at the container width so it can never overflow.
+ * -------------------------------------------------------------------------- */
+
+.project-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
+}
+
+.content-sections {
+  grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
+}
+
+.gallery {
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+}
+
+@media screen and (max-width: 768px) {
+  .project-grid {
+    gap: 24px;
+    padding: 24px 12px;
+  }
+
+  .fronter2 h3,
+  .fronter h2 {
+    letter-spacing: 0.02em;
+  }
+}

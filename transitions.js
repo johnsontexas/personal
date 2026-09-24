@@ -1,7 +1,7 @@
 // Add transition element to the body with loading icon
 document.body.insertAdjacentHTML('beforeend', `
     <div class="page-transition">
-      <img src="images/Mis/holder.png" alt="loading" class="loading-icon">
+      <img src="/images/icon.ico" alt="loading" class="loading-icon">
     </div>
   `);
   

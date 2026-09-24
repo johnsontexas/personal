@@ -1,0 +1,9 @@
+{
+  "name": "johnsontexas-site",
+  "private": true,
+  "type": "module",
+  "description": "Static site. The dependency is only used by the Netlify functions under netlify/functions.",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
