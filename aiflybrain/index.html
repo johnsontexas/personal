@@ -3,169 +3,135 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Fly Brain — Daniel Johnson Quintero</title>
+<title>AI Fly Brain &mdash; Daniel A. Johnson</title>
 <link rel="icon" type="image/x-icon" href="/images/icon.ico">
-<meta name="description" content="A small language model built on a fruit fly's real brain wiring: 35,953 FlyWire neurons and 960,585 connections, spiking in your browser.">
-<meta property="og:title" content="AI Fly Brain — Daniel Johnson Quintero">
-<meta property="og:description" content="A small language model built on a fruit fly's real brain wiring, running in your browser.">
-<meta property="og:url" content="https://johnsontexas.com/aiflybrain/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Lato:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/lab.css">
+<meta name="description" content="An AI grown inside a fruit fly's real brain wiring: 35,953 FlyWire neurons and 960,585 real synapses, spiking in your browser. Watch it learn to read, remember and reason.">
 <link rel="stylesheet" href="/aiflybrain/style.css">
 </head>
-<body class="lab">
+<body>
+<div class="fronter">
+  <h1>AI Fly Brain</h1>
+  <h2>An AI grown inside a fruit fly's real brain wiring</h2>
+</div>
+<div class="sitenav">
+  <a href="/">Home</a>
+  <a href="/about.html">About Me</a>
+  <a href="/classes.html">Education</a>
+  <a href="/resume.html">Resume</a>
+  <a href="/projects.html">Projects</a>
+  <a href="/mentions.html">Mentions</a>
+  <a href="/contact.html">Contact</a>
+</div>
 
-<header class="lab-top">
-  <a class="wordmark" href="/">Daniel Johnson Quintero</a>
-  <nav class="lab-nav" aria-label="Site">
-    <a href="/">Home</a>
-    <a href="/about.html">About</a>
-    <a href="/classes.html">Education</a>
-    <a href="/resume.html">Resume</a>
-    <a href="/projects.html" aria-current="page">Projects</a>
-    <a href="/mentions.html">Mentions</a>
-    <a href="/contact.html">Contact</a>
-  </nav>
+<header>
+  <h1>AI Fly Brain <span>&mdash; 35,953 real neurons, spiking in your browser</span></h1>
+  <div class="sub" id="sub">loading the connectome&hellip;</div>
+  <div class="livebar" id="livebar"><span class="dot"></span><span id="livetxt">checking whether it is learning right now&hellip;</span></div>
 </header>
 
-<section class="lab-mast">
-  <div>
-    <p class="lab-kicker"><a href="/projects.html">Projects</a><span class="sep">/</span>Experiment 02<span class="sep">/</span>September 2026</p>
-    <h1>AI Fly Brain</h1>
-    <p class="lab-dek">A small language model built out of a fruit fly's actual brain. The wiring is
-      the fly's and never changes; training only adjusts how strong each synapse is. It runs
-      entirely in your browser.</p>
-    <dl class="lab-stats">
-      <div><dt>Neurons</dt><dd id="nN">35,953</dd></div>
-      <div><dt>Connections</dt><dd id="nE">960,585</dd></div>
-      <div><dt>Synapses</dt><dd id="nS">14.5M</dd></div>
-      <div><dt>Output cells</dt><dd>1,299</dd></div>
-    </dl>
-    <div class="lab-status">
-      <div id="sub">Loading the connectome…</div>
-      <div class="livebar" id="livebar"><span class="dot"></span><span id="livetxt">Checking training status…</span></div>
+<main>
+  <section class="card intro">
+    <h2>What this is</h2>
+    <p>A fruit fly's brain has been mapped synapse by synapse. The
+      <a href="https://flywire.ai" target="_blank" rel="noopener">FlyWire</a> connectome lists every
+      neuron and every connection between them. Most AI runs on made-up networks. This one runs on
+      <b>a real animal's wiring diagram</b>, and it is not a simulation of a fly doing fly things:
+      it is a machine learning to read, remember and answer questions, using a fly's brain as its body.</p>
+    <p>The vessel is the fly's central brain: <b id="nN">35,953</b> neurons joined by
+      <b id="nE">960,585</b> real connections carrying <b id="nS">14.5 million</b> synapses. Training
+      changes only what a brain can change &mdash; how strong each synapse is, and how each neuron
+      rests, leaks and tires. <b>Which neuron connects to which is never touched.</b> That is the fly's,
+      and it is fixed.</p>
+    <p>Everything on this page runs on your own device. There is no server and no API: your browser
+      loads the wiring and the learned synapse strengths, then spikes the neurons itself.</p>
+  </section>
+
+  <section class="card">
+    <h2>How a letter becomes a thought</h2>
+    <div class="flow">
+      <div><b>1. It smells the letter</b><span>Every character has its own odour: a fixed pattern over the
+        fly's 106 olfactory glomeruli. Typing <i>h</i> releases the smell of <i>h</i> onto its
+        receptor neurons.</span></div>
+      <div><b>2. Spikes cross the brain</b><span>The signal travels the real connectome for five ticks
+        &mdash; long enough to cross the three or four synapses from nose to output.</span></div>
+      <div><b>3. Its mouth answers</b><span>The 1,299 descending neurons (the cables a real fly uses to
+        command its legs and wings) are split into one group per character. Whichever group is driven
+        hardest is the letter it says.</span></div>
+      <div><b>4. It remembers</b><span>Nothing is reset between letters. What it has read so far lives on
+        as voltage and fatigue in its neurons &mdash; that is its short-term memory.</span></div>
     </div>
-  </div>
-  <canvas class="lab-art" data-plate="aiflybrain" data-kind="connectome" data-tone="dark" data-label="A" data-live
-    aria-label="Illustration: neurons and connections with one pathway traced through them"></canvas>
-</section>
+  </section>
 
-<main class="lab-main">
-
-  <section class="lab-sec" id="talk">
-    <div class="lab-sec-head"><span class="lab-num">01</span><h2>Talk to it</h2>
-      <span class="aside">Try one of the prompts, or type your own.</span></div>
+  <section class="card live">
+    <h2>Talk to it</h2>
+    <p class="note">Ask it something and watch its neurons fire. Teal is the smell coming in, orange is
+      the central brain thinking, yellow is the mouth answering. Every dot is one real neuron, drawn where
+      it actually sits in the fly's head.</p>
     <div class="stage">
-      <figure class="plate">
-        <div class="plate-body brainwrap">
-          <canvas id="brain"></canvas>
-          <div class="nowbox"><div class="now" id="now"></div><div class="nowlab" id="nowlab">idle</div></div>
-          <div class="count"><b id="spk">0</b><span>spikes, this letter</span></div>
-        </div>
-        <figcaption><b>Fig. 1</b>Every point is one neuron, drawn at its real position in the fly's
-          head. Teal is the odour input, amber is the central brain, gold is the descending output
-          neurons.</figcaption>
-      </figure>
-      <div class="panel side">
+      <div class="brainwrap">
+        <canvas id="brain"></canvas>
+        <div class="nowbox"><div class="now" id="now"></div><div class="nowlab" id="nowlab">idle</div></div>
+        <div class="count"><b id="spk">0</b><span>spikes this letter</span></div>
+      </div>
+      <div class="side">
         <div class="msgs" id="msgs"></div>
         <div class="chips" id="chips"></div>
         <form id="form"><input id="inp" type="text" maxlength="80" placeholder="is 8 more than 3?" autocomplete="off">
-          <button id="send" class="btn btn-ink">Ask</button></form>
+          <button id="send">Ask</button></form>
         <div class="opts">
-          <label>Checkpoint <select id="age"></select></label>
-          <label>Randomness <input id="temp" type="range" min="0.02" max="0.3" step="0.01" value="0.05"></label>
-          <label>Speed <input id="speed" type="range" min="4" max="40" value="14"></label>
+          <label>brain age <select id="age"></select></label>
+          <label>creativity <input id="temp" type="range" min="0.02" max="0.3" step="0.01" value="0.05"></label>
+          <label>speed <input id="speed" type="range" min="4" max="40" value="14"></label>
         </div>
-        <div class="guess"><p class="panel-title gap">Next-letter guess</p><div id="guess"></div></div>
+        <div class="guess"><h3>its next-letter guess</h3><div id="guess"></div></div>
       </div>
     </div>
   </section>
 
-  <section class="lab-sec" id="how">
-    <div class="lab-sec-head"><span class="lab-num">02</span><h2>How a letter moves through it</h2></div>
-    <div class="lab-prose">
-      <p>The fruit fly brain has been mapped one synapse at a time by the
-        <a href="https://flywire.ai" target="_blank" rel="noopener">FlyWire</a> project. Most neural
-        networks use a wiring pattern someone designed. This one uses the fly's: every connection here
-        exists in a real animal. Training can change synapse strength and how each neuron rests, leaks
-        and tires, but it can't add or remove a connection.</p>
-    </div>
-    <div class="lab-cols" style="margin-top:22px">
-      <div><span class="lab-step">Step 1</span><h3>Input as smell</h3>
-        <p>Each character is assigned a fixed odour, a pattern across the fly's 106 olfactory
-          glomeruli. Typing <i>h</i> activates the receptor neurons for that pattern.</p></div>
-      <div><span class="lab-step">Step 2</span><h3>Five ticks of spiking</h3>
-        <p>The signal runs through the connectome for five time steps, enough to cross the three or
-          four synapses between the antennae and the output.</p></div>
-      <div><span class="lab-step">Step 3</span><h3>Output</h3>
-        <p>The 1,299 descending neurons, which a real fly uses to drive its legs and wings, are split
-          into one group per character. The most active group is the next letter.</p></div>
-      <div><span class="lab-step">Step 4</span><h3>Memory</h3>
-        <p>Nothing resets between letters. Earlier input stays in the network as voltage and fatigue,
-          and that residue is the only short-term memory it has.</p></div>
-    </div>
+  <section class="card">
+    <h2>What it was taught</h2>
+    <p class="note">Short lines, most of them small problems whose answer depends on something earlier in
+      the line &mdash; so the only way to answer is to hold it in the neurons. The test problems include
+      words and rules it never saw while learning.</p>
+    <p class="note" id="scoreNote"></p>
+    <table class="tasks"><thead><tr><th>problem</th><th>example</th><th>letters right</th><th>answers fully right</th>
+      <th>no-memory baseline</th></tr></thead><tbody id="tasks"></tbody></table>
   </section>
 
-  <section class="lab-sec" id="results">
-    <div class="lab-sec-head"><span class="lab-num">03</span><h2>What it can do</h2></div>
-    <p class="lab-note">The training data is short lines, mostly small problems where the answer depends on
-      something earlier in the line. The test set includes words and rules that never appear in training.</p>
-    <p class="lab-note" id="scoreNote"></p>
-    <div class="panel">
-      <table class="lab-table tasks"><thead><tr><th>Task</th><th>Example</th><th class="num">Letters correct</th>
-        <th class="num">Answers correct</th><th class="num">No-memory baseline</th></tr></thead><tbody id="tasks"></tbody></table>
-    </div>
-  </section>
-
-  <section class="lab-sec" id="growth">
-    <div class="lab-sec-head"><span class="lab-num">04</span><h2>Training history</h2></div>
-    <p class="lab-note" id="growNote"></p>
+  <section class="card">
+    <h2>Watching it grow up</h2>
+    <p class="note" id="growNote"></p>
     <div class="charts">
-      <figure class="plate paper-fig">
-        <div class="panel"><p class="panel-title">Prediction error</p><canvas id="loss" height="200"></canvas></div>
-        <figcaption><b>Fig. 2</b>3.71 is random guessing. Around 2.9 it has learned which letters are
-          common; below about 2.0 it is spelling real words.</figcaption>
-      </figure>
-      <figure class="plate paper-fig">
-        <div class="panel"><p class="panel-title">Letters correct, by task</p><canvas id="curve" height="200"></canvas>
-          <div class="legend" id="legend"></div></div>
-        <figcaption><b>Fig. 3</b>Each line is one task from the table above.</figcaption>
-      </figure>
+      <div><h3>Prediction error</h3><canvas id="loss" height="200"></canvas>
+        <span class="cap">3.71 is random guessing. ~2.9 means it knows which letters are common.
+          Below ~2.0 means it is spelling real words.</span></div>
+      <div><h3>Answers right, by problem</h3><canvas id="curve" height="200"></canvas>
+        <div class="legend" id="legend"></div></div>
     </div>
-    <div class="panel tmpanel">
-      <p class="panel-title">The same prompts at every checkpoint</p>
-      <div class="tmrow"><input id="scrub" type="range" min="0" value="0" aria-label="Checkpoint"><span id="tmlab" class="mono"></span></div>
-      <div class="probes mono" id="probes"></div>
-      <p class="lab-note" style="margin:10px 0 0">Its own answers, recorded during training. Spaces are shown as ␣.</p>
-    </div>
+    <h3 class="tm">The same question, at every age</h3>
+    <p class="note">Its own answers, recorded at each checkpoint. Spaces are shown as ␣.</p>
+    <div class="tmrow"><input id="scrub" type="range" min="0" value="0"><span id="tmlab"></span></div>
+    <div class="probes mono" id="probes"></div>
   </section>
 
-  <section class="lab-sec" id="limits">
-    <div class="lab-sec-head"><span class="lab-num">05</span><h2>Limitations</h2></div>
-    <ul class="lab-list">
-      <li>It isn't a fly and it isn't conscious. It uses a fly's wiring diagram as a computer. A real fly
-        can't read.</li>
-      <li>It is slow to train. Each character costs five time steps across 36,000 neurons and nearly a
-        million connections, forward and backward, which is roughly 1,000 times slower than a
-        conventional model of the same size.</li>
-      <li>Only connections with five or more synapses are kept, FlyWire's usual confidence threshold.
-        Signs follow Dale's law, so an excitatory neuron can't learn to inhibit.</li>
-      <li>The comparison that matters is whether the real wiring learns better than the same neurons
-        wired at random. I haven't run that control yet; it's next.</li>
+  <section class="card">
+    <h2>Honest notes</h2>
+    <ul>
+      <li><b>It is not conscious, and it is not a fly.</b> It is a fly's wiring diagram used as a computer.
+        A real fly never reads and has no idea what a letter is.</li>
+      <li><b>It is slow to teach.</b> Every letter costs five ticks across 36k neurons and nearly a million
+        synapses, forwards and then backwards to learn: about 1,000&times; slower than an ordinary AI model
+        of the same size. Hours of training here are worth seconds of training there.</li>
+      <li><b>Only 5+ synapse connections are kept</b>, FlyWire's usual confidence threshold, and signs follow
+        Dale's law: a neuron that excites can never learn to inhibit.</li>
+      <li><b>The honest test</b> is whether the real wiring learns better than the same neurons wired at
+        random. That control is the next experiment.</li>
     </ul>
+    <p class="note">Built with the FlyWire connectome (Dorkenwald et al. 2024; Schlegel et al. 2024) and the
+      whole-brain spiking model of Shiu et al. 2024. Trained with surrogate-gradient backpropagation through
+      time. Code: <span class="mono">AIBRAIN</span> &mdash; ask me for it.</p>
   </section>
 </main>
-
-<footer class="lab-foot">
-  <div class="lab-refs">Data: FlyWire connectome (Dorkenwald et al., 2024; Schlegel et al., 2024).
-    Neuron model after the whole-brain spiking model of Shiu et al., 2024. Trained with surrogate-gradient
-    backpropagation through time. Code available on request.</div>
-  <div><a href="/projects.html">← All projects</a> &nbsp;·&nbsp; <a href="/flychess/">Experiment 01: Fly Chess</a></div>
-</footer>
-
-<script type="module" src="/js/plate.js"></script>
 <script type="module" src="/aiflybrain/brain.js"></script>
 <script type="module" src="/aiflybrain/page.js"></script>
 </body>
