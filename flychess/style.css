@@ -71,7 +71,19 @@
 #pgn { width: 100%; min-height: 96px; font: 12px/1.55 var(--f-mono); resize: vertical; background: var(--paper); }
 
 /* ---- the brain ---- */
+.brainplate { position: relative; }
 #brain { width: 100%; display: block; }
+.viewbtns { position: absolute; top: 8px; right: 8px; display: flex; border: 1px solid var(--plate-rule);
+  border-radius: 3px; overflow: hidden; background: var(--plate); }
+.viewbtns button { font: 10.5px var(--f-mono); letter-spacing: .04em; padding: 5px 9px; border: 0;
+  background: none; color: var(--plate-dim); cursor: pointer; }
+.viewbtns button + button { border-left: 1px solid var(--plate-rule); }
+.viewbtns button.on { background: var(--plate-2); color: var(--plate-ink); }
+.viewbtns button:focus-visible { outline: 2px solid var(--bronze); outline-offset: -2px; }
+@media (max-width: 560px) {
+  .viewbtns { position: static; margin: 0 8px 8px; justify-content: center; }
+  .viewbtns button { flex: 1; }
+}
 .mbonwrap { padding: 6px 8px; }
 #mbon { width: 100%; height: 74px; display: block; }
 

@@ -88,14 +88,24 @@
 
       <div class="game-side">
         <figure class="plate">
-          <div class="plate-body"><canvas id="brain" width="900" height="380"></canvas></div>
-          <figcaption><b>Fig. 1</b>The mushroom body as it considers its move. Every point is a Kenyon
-            cell at its FlyWire position; the larger circles are output neurons.</figcaption>
+          <div class="plate-body brainplate">
+            <canvas id="brain"></canvas>
+            <div class="viewbtns" role="group" aria-label="View">
+              <button type="button" data-v="whole" class="on">Whole brain</button>
+              <button type="button" data-v="circuit">Mushroom body</button>
+            </div>
+          </div>
+          <figcaption><b>Fig. 1</b>The fly's whole brain from the front: each dot is one of its
+            138,625 FlyWire neurons at its real position. As it smells a move, the signal runs along
+            real synapses from the antennal lobe to the Kenyon cells to the output neurons, and dopamine
+            neurons fire when the result is better or worse than it expected.</figcaption>
           <div class="keys">
-            <span><i style="background:#c9c2b3"></i>Kenyon cell, silent</span>
-            <span><i style="background:#2f8a7c"></i>Active for this position</span>
+            <span><i style="background:#2f8a7c"></i>Projection neuron (input)</span>
+            <span><i style="background:#b86a26"></i>Kenyon cell</span>
             <span><i style="background:#5e9a62"></i>Approach output</span>
             <span><i style="background:var(--sig-neg)"></i>Avoid output</span>
+            <span><i style="background:#c9a227"></i>PAM dopamine (better)</span>
+            <span><i style="background:#6b4fa0"></i>PPL1 dopamine (worse)</span>
           </div>
         </figure>
 
@@ -173,7 +183,9 @@
     <div class="lab-cols">
       <div><span class="lab-step">Step 1</span><h3>Encode</h3>
         <p>For every legal move, the position it leads to is written onto 685 antennal-lobe
-          projection neurons, the cells that carry smell into the mushroom body.</p></div>
+          projection neurons, the cells that carry smell into the mushroom body. Like the fly's
+          dedicated CO₂ and geosmin channels, danger gets its own: 96 of them fire when a piece
+          is left where it can be taken.</p></div>
       <div><span class="lab-step">Step 2</span><h3>Sparsify</h3>
         <p>The calyx keeps only the strongest 259 of the 5,177 Kenyon cells active, so each position
           gets its own sparse code.</p></div>
@@ -182,7 +194,8 @@
           push against it. It plays the best-scoring move.</p></div>
       <div><span class="lab-step">Step 4</span><h3>Learn</h3>
         <p>Dopamine, a reward prediction error, rewrites the Kenyon cell to output synapses during
-          play. A win produces a large burst.</p></div>
+          play: PAM neurons when a move turns out better than expected, PPL1 when worse. Winning
+          or losing material is felt at once; a win produces a large burst.</p></div>
     </div>
   </section>
 </main>
@@ -197,8 +210,9 @@
 <script src="https://accounts.google.com/gsi/client" async defer
         onload="window.__initGoogle && window.__initGoogle()"></script>
 <script type="module">
-import { canonical, encode, Brain, loadBrain, WIN_DOPAMINE, N_PN, N_RES,
-         greedyMove, randomMove, gameScore, estimateElo } from '/flychess/flybrain.js';
+import { canonical, encode, Brain, loadBrain, WIN_DOPAMINE, N_PN, N_RES, MAX_HZ,
+         greedyMove, randomMove, searchMove, gameScore, estimateElo } from '/flychess/flybrain.js';
+import { BrainViewer, loadAtlas } from '/flychess/viewer.js';
 const B = await loadBrain('/flychess/fly.bin');
 
 /* ---------------------------------------------------------------- state -- */
@@ -208,12 +222,19 @@ const FILES = "abcdefgh";
 // showed up black on phones.
 const VS = "\uFE0E";
 const GLYPH = { p:"♟"+VS, n:"♞"+VS, b:"♝"+VS, r:"♜"+VS, q:"♛"+VS, k:"♚"+VS };
-const SHAPING = 0.15, DRAW_REWARD = -0.05;
+// material dopamine per capture, against a win's 1.0 (see brain.py)
+const SHAPING = 0.6, DRAW_REWARD = -0.05;
 const PVAL = { p:1, n:3, b:3.2, r:5, q:9, k:0 };
 // Keyed to the encoding, not to a version number someone must remember to
 // bump: weights learned under a different channel layout are meaningless, and
 // silently restoring them is worse than forgetting.
-const KEY = `flychess.${N_PN}.${N_RES}`;
+const KEY = `flychess.${N_PN}.${N_RES}.threat`;
+// Rating from the most recent benchmark games only, so it follows the fly as
+// it learns. Summing every game ever played froze the number: after 1,770
+// games one more session could not move it.
+const BENCH_WINDOW = 30;
+const OPPS = ["random", "greedy", "search2"];
+const emptyBench = () => ({ random: [], greedy: [], search2: [] });
 
 const brain = new Brain(B);
 let game = new Chess(), flyIsWhite = false, flipped = false;
@@ -221,7 +242,7 @@ let sel = null, lastMove = null, busy = false, over = false, pending = false;
 let lastMaterial = 0;
 let baseline = Float32Array.from(B.kmW);     // what the shared brain gave us
 let db = null, shared = false, canWrite = true;
-let stats = { games: 0, elo: B.elo, bench: { random:{s:0,n:0}, greedy:{s:0,n:0} } };
+let stats = { games: 0, elo: B.elo, bench: emptyBench() };
 let rec = { w:0, d:0, l:0 };
 
 const $ = (id) => document.getElementById(id);
@@ -350,7 +371,8 @@ async function flyMove() {
   if (pending) {
     const m = material(game, flyIsWhite), d = m - lastMaterial;
     lastMaterial = m;
-    brain.reinforce(Math.tanh(d / 3) * SHAPING, best, false, 1);
+    const da = brain.reinforce(Math.tanh(d / 3) * SHAPING, best, false, 1);
+    if (viewer) viewer.dopamine(da);
   }
   scored.sort((a, b) => b[1] - a[1]);
   $("cands").innerHTML = scored.slice(0, 26).map((c, i) =>
@@ -359,15 +381,17 @@ async function flyMove() {
 
   for (let i = Math.min(5, scored.length - 1); i >= 0; i--) {
     game.move(scored[i][0]);
-    brain.evaluate(encode(canonical(game, flyIsWhite), B), true);
+    const pn = encode(canonical(game, flyIsWhite), B);
+    brain.evaluate(pn, true);
     game.undo();
-    show(); await sleep(70);
+    show(pn); await sleep(i ? 110 : 60);
   }
   const mv = scored[0][0];
   game.move(mv);
-  brain.evaluate(encode(canonical(game, flyIsWhite), B), true);
+  const pn = encode(canonical(game, flyIsWhite), B);
+  brain.evaluate(pn, true);
   game.undo();
-  pending = true; show();
+  pending = true; show(pn);
   game.move(mv); lastMove = mv; sel = null; played(mv);
   busy = false;
   if (game.game_over()) finish(); else setStatus("Your move.");
@@ -386,7 +410,10 @@ function finish() {
   if (game.in_checkmate()) result = (game.turn() === "w") !== flyIsWhite ? 1 : -1;
   const r = result > 0 ? 1 : result < 0 ? -1 : DRAW_REWARD;
   const gain = result > 0 ? WIN_DOPAMINE : 1;
-  if (pending) brain.reinforce(r, 0, true, gain);
+  if (pending) {
+    const d = brain.reinforce(r, 0, true, gain);
+    if (viewer) viewer.dopamine(d * gain);
+  }
   stats.games++;
   rec.w += result > 0; rec.l += result < 0; rec.d += result === 0;
   persist();
@@ -433,14 +460,17 @@ async function benchGame(kind) {
       for (const s of sc) if (s[1] > best[1]) best = s;
       g.move(best[0]);
     } else {
-      const m = kind === "greedy" ? greedyMove(g, B) : randomMove(g);
+      const m = opponentMove(kind, g);
       if (!m) break;
       g.move(m);
     }
-    if (ply % 4 === 0) await frame();     // keep the page responsive
+    if (ply % 4 === 0) await tick();      // keep the page responsive
   }
   const res = g.in_checkmate() ? ((g.turn() === "w") !== flyWhite ? 1 : -1) : 0;
   return gameScore(res, material(g, flyWhite));
+}
+function opponentMove(kind, g) {
+  return kind === "search2" ? searchMove(g, B, 2) : kind === "greedy" ? greedyMove(g, B) : randomMove(g);
 }
 let measuring = false;
 async function measure(nEach = 6, quiet = false) {
@@ -448,17 +478,18 @@ async function measure(nEach = 6, quiet = false) {
   measuring = true;
   const btn = $("measure");
   btn.disabled = true;
-  for (const kind of ["random", "greedy"]) {
-    for (let i = 0; i < nEach; i++) {
-      if (!quiet) btn.textContent = `Measuring… ${kind} ${i + 1}/${nEach}`;
-      stats.bench[kind].s += await benchGame(kind);
-      stats.bench[kind].n += 1;
+  for (const kind of OPPS) {
+    // the 2-ply opponent is slow in a browser: fewer games, still enough to
+    // keep the rating from running off the top once greedy is beaten
+    const n = kind === "search2" ? Math.max(1, Math.ceil(nEach / 3)) : nEach;
+    for (let i = 0; i < n; i++) {
+      if (!quiet) btn.textContent = `Measuring… ${kind} ${i + 1}/${n}`;
+      const sc = await benchGame(kind);
+      stats.bench[kind].push(sc);
+      if (stats.bench[kind].length > BENCH_WINDOW) stats.bench[kind].shift();
     }
   }
-  const r = {};
-  for (const k of ["random", "greedy"])
-    if (stats.bench[k].n) r[k] = { score: stats.bench[k].s / stats.bench[k].n, n: stats.bench[k].n };
-  const e = estimateElo(r);
+  const e = estimateElo(benchSummary());
   if (e !== null) { stats.elo = e; pushElo(); }
   btn.textContent = "Measure its Elo";
   btn.disabled = false;
@@ -468,13 +499,24 @@ async function measure(nEach = 6, quiet = false) {
 }
 $("measure").onclick = () => measure(6);
 
+function benchSummary() {
+  const r = {};
+  for (const k of OPPS) {
+    const a = stats.bench[k] || [];
+    if (a.length) r[k] = { score: a.reduce((x, y) => x + y, 0) / a.length, n: a.length };
+  }
+  return r;
+}
 function paintStats() {
   $("elo").textContent = stats.elo === null ? "—" : stats.elo;
   $("eloStat").textContent = $("elo").textContent;
-  const n = stats.bench.random.n + stats.bench.greedy.n;
+  const r = benchSummary();
+  const n = OPPS.reduce((t, k) => t + (r[k] ? r[k].n : 0), 0);
   $("elowhat").textContent = stats.elo === null
     ? "press Measure to find out"
-    : n ? `measured here over ${n} benchmark games` : "measured during training";
+    : n ? `from its last ${n} benchmark games (` +
+          OPPS.filter(k => r[k]).map(k => `${Math.round(r[k].score * 100)}% vs ${k}`).join(", ") + ")"
+        : "measured during training";
   $("games").textContent = stats.games.toLocaleString();
   $("mem").textContent = (brain.learnedFraction() * 100).toFixed(3) + "%";
   $("rec").textContent = `${rec.w}–${rec.d}–${rec.l}`;
@@ -488,14 +530,14 @@ function paintStats() {
 function quantize(w) {
   const u = new Uint8Array(w.length);
   for (let i = 0; i < w.length; i++) {
-    const lo = B.kmW0[i] * 0.05, hi = B.kmW0[i] * 3.0, d = hi - lo;
+    const lo = B.kmA[i] * 0.05, hi = B.kmA[i] * 3.0, d = hi - lo;
     u[i] = Math.max(0, Math.min(255, Math.round(d > 0 ? (w[i] - lo) / d * 255 : 0)));
   }
   return u;
 }
 function dequantize(u, out) {
   for (let i = 0; i < u.length; i++) {
-    const lo = B.kmW0[i] * 0.05, hi = B.kmW0[i] * 3.0;
+    const lo = B.kmA[i] * 0.05, hi = B.kmA[i] * 3.0;
     out[i] = lo + (u[i] / 255) * (hi - lo);
   }
 }
@@ -530,11 +572,17 @@ function loadLocal() {
       brain.norm = Math.max(3 * Math.sqrt(Math.max(m.zVar, 1e-12)), 1e-6);
       stats.games = m.games || 0;
       if (m.elo != null) stats.elo = m.elo;
-      if (m.bench) stats.bench = m.bench;
+      stats.bench = cleanBench(m.bench);
       if (Array.isArray(m.history)) eloHistory = m.history;
     }
     return true;
   } catch (e) { return false; }
+}
+function cleanBench(b) {
+  const out = emptyBench();
+  if (b) for (const k of OPPS)
+    if (Array.isArray(b[k])) out[k] = b[k].filter(v => typeof v === "number").slice(-BENCH_WINDOW);
+  return out;
 }
 /* ---------------------------------------------------- the shared brain -- */
 // Netlify Blobs behind /api/brain. The browser sends the weights it has now
@@ -547,9 +595,9 @@ async function pullShared() {
     if (!r.ok) return false;
     const d = await r.json();
     backendUp = true;
-    if (!d || !d.w) return false;
+    if (!d || !d.w || d.enc !== KEY) return false;    // none yet, or an older encoding
     const u = b64u8(d.w);
-    if (u.length !== B.kmW.length) return false;      // a different encoding
+    if (u.length !== B.kmW.length) return false;
     dequantize(u, B.kmW);
     if (typeof d.zMean === "number") {
       brain.zMean = d.zMean; brain.zVar = d.zVar;
@@ -557,7 +605,7 @@ async function pullShared() {
     }
     stats.games = d.games || 0;
     if (d.elo != null) stats.elo = d.elo;
-    if (d.bench) stats.bench = d.bench;
+    stats.bench = cleanBench(d.bench);
     if (Array.isArray(d.history)) eloHistory = d.history;
     return true;
   } catch (e) { return false; }
@@ -571,6 +619,7 @@ async function pushShared() {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
+        enc: KEY,
         w: u8b64(quantize(B.kmW)),
         base: u8b64(quantize(baseline)),
         elo: stats.elo, bench: stats.bench,
@@ -592,59 +641,18 @@ async function pushShared() {
 function persist() { saveLocal(); pushShared(); }
 
 /* ------------------------------------------------------------- viewer -- */
-const cv = $("brain"), cx = cv.getContext("2d");
+// The whole brain (viewer.js). It loads after the board is up; until then,
+// and if it cannot load, the page plays exactly the same without it.
+let viewer = null;
 const mcv = $("mbon"), mcx = mcv.getContext("2d");
-let pulse = 0;
-function fit() {
-  // the neurons fill roughly a 1000x725 box, so keep a similar shape
-  const w = cv.clientWidth || 900, h = Math.round(w * 0.62);
-  cv.width = w * 2; cv.height = h * 2;
-  cx.setTransform(2, 0, 0, 2, 0, 0); paint();
-}
-// fit the neurons' own bounding box into the plate, keeping their proportions
-const BOX = (() => {
-  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
-  for (const xy of [B.kcXY, B.mbonXY]) for (let i = 0; i < xy.length; i += 2) {
-    x0 = Math.min(x0, xy[i]); x1 = Math.max(x1, xy[i]); y0 = Math.min(y0, xy[i + 1]); y1 = Math.max(y1, xy[i + 1]);
-  }
-  return { x0, y0, w: x1 - x0 || 1, h: y1 - y0 || 1 };
-})();
-function place(x, y, w, h, pad) {
-  const s = Math.min((w - 2 * pad) / BOX.w, (h - 2 * pad) / BOX.h);
-  const ox = (w - BOX.w * s) / 2, oy = (h - BOX.h * s) / 2;
-  return [ox + (x - BOX.x0) * s, oy + (y - BOX.y0) * s];
-}
-function paint() {
-  const w = cv.width / 2, h = cv.height / 2, pad = 18;
-  cx.clearRect(0, 0, w, h);
-  cx.fillStyle = "#c9c2b3";
-  for (let i = 0; i < B.nKc; i++) {
-    const [x, y] = place(B.kcXY[i * 2], B.kcXY[i * 2 + 1], w, h, pad);
-    cx.fillRect(x, y, 1.5, 1.5);
-  }
-  const L = brain.last;
-  if (L) {
-    for (let q = 0; q < L.active.length; q++) {
-      const i = L.active[q], a = Math.min(1, L.act[q] * 0.5 + 0.35);
-      const [x, y] = place(B.kcXY[i * 2], B.kcXY[i * 2 + 1], w, h, pad);
-      cx.fillStyle = `rgba(47,138,124,${a})`;
-      cx.beginPath(); cx.arc(x, y, 1.9 + a * 1.5, 0, 6.283); cx.fill();
-    }
-    let mx = 1; for (const r of L.mbon) mx = Math.max(mx, Math.abs(r));
-    for (let j = 0; j < B.nMbon; j++) {
-      const [x, y] = place(B.mbonXY[j * 2], B.mbonXY[j * 2 + 1], w, h, pad);
-      const s = Math.min(1, Math.abs(L.mbon[j]) / mx);
-      cx.beginPath(); cx.arc(x, y, 3 + s * 5.5, 0, 6.283);
-      cx.fillStyle = B.sign[j] > 0 ? `rgba(94,154,98,${.25 + s * .75})`
-                                   : `rgba(204,90,66,${.25 + s * .75})`;
-      cx.fill();
-    }
-  }
-  if (pulse > 0) {
-    cx.fillStyle = `rgba(201,162,39,${pulse * 0.18})`; cx.fillRect(0, 0, w, h);
-    pulse -= 0.02; if (pulse > 0) requestAnimationFrame(paint);
-  }
-}
+loadAtlas("/flychess/atlas.bin").then(atlas => {
+  viewer = new BrainViewer($("brain"), atlas, B);
+  document.querySelectorAll(".viewbtns button").forEach(btn => btn.onclick = () => {
+    document.querySelectorAll(".viewbtns button").forEach(x => x.classList.toggle("on", x === btn));
+    viewer.setView(btn.dataset.v);
+  });
+}).catch(() => { $("brain").closest("figure").hidden = true; });
+function fit() { if (viewer) viewer.fit(); }
 function paintMbon() {
   const L = brain.last, w = mcv.width, h = mcv.height;
   mcx.clearRect(0, 0, w, h); if (!L) return;
@@ -658,8 +666,9 @@ function paintMbon() {
   mcx.strokeStyle = "#d3c9b7"; mcx.beginPath();
   mcx.moveTo(0, h / 2); mcx.lineTo(w, h / 2); mcx.stroke();
 }
-function show() {
-  paint(); paintMbon();
+function show(pn) {
+  if (viewer && pn) viewer.think(pn, brain.last, MAX_HZ);
+  paintMbon();
   if (brain.last) setMeter("vbar", "vnum", brain.last.v, 1);
   setMeter("dbar", "dnum", brain.dopamine, 1);
 }
@@ -672,7 +681,7 @@ function setMeter(id, numId, v, max) {
 }
 function setStatus(h) { $("status").innerHTML = h; }
 function flood() {
-  pulse = 1; paint();
+  if (viewer) viewer.dopamine(1);
   const f = $("flood"), t = $("floodtxt");
   f.classList.remove("go"); t.classList.remove("go");
   void f.offsetWidth; void t.offsetWidth;
@@ -694,6 +703,7 @@ function newGame(humanWhite) {
   sel = null; lastMove = null; over = false; pending = false; busy = false;
   promoPending = null; $("promo").classList.remove("on");
   brain.startGame(); lastMaterial = material(game, flyIsWhite);
+  if (viewer) viewer.clear();
   $("pgnbox").classList.remove("on");
   buildBoard(); draw();
   if (flyIsWhite) flyMove(); else setStatus("Your move.");
@@ -704,7 +714,7 @@ $("flip").onclick = () => { flipped = !flipped; buildBoard(); draw(); };
 $("forget").onclick = () => {
   B.kmW.set(B.kmW0); baseline.set(B.kmW0);
   brain.zMean = B.zMean; brain.zVar = (B.norm / 3) ** 2; brain.norm = B.norm;
-  stats = { games: 0, elo: B.elo, bench: { random:{s:0,n:0}, greedy:{s:0,n:0} } };
+  stats = { games: 0, elo: B.elo, bench: emptyBench() };
   rec = { w:0, d:0, l:0 };
   eloHistory = []; trainStats = { games:0, wins:0, drills:0, mates:0 };
   drawChart();
@@ -716,6 +726,7 @@ addEventListener("resize", fit);
 
 window.flychess = {
   get game(){ return game; }, get brain(){ return brain; }, get B(){ return B; },
+  get viewer(){ return viewer; },
   get busy(){ return busy; }, get over(){ return over; }, get stats(){ return stats; },
   play(san){ const m = game.moves({verbose:true}).find(x => x.san === san); if (m) human(m); },
   playRandom(){ const ms = game.moves({verbose:true});
@@ -811,11 +822,13 @@ function slide(from, to) {
 function played(mv) { draw(); slide(mv.from, mv.to); moveSfx(mv, game); }
 
 /* ------------------------------------------------------ auto-training -- */
-// Mirrors mbchess/train.py: one full game against a bot, then twenty mate
-// drills. The ratio is not cosmetic -- a full game makes ~30 dopamine events
-// and only its last is about winning, so without the drills the fly's
-// checkmate rate collapses (see CHESS.md).
-const TRAIN_T = 0.3, DRILLS_PER_GAME = 20, SYNC_EVERY = 10;
+// Mirrors mbchess/train.py: one full game against a bot, then five mate
+// drills. Without drills a full game's ~30 dopamine events drown the one that
+// is about winning and the checkmate rate collapses; with twenty, the drills
+// drown the material signal instead (see CHESS.md).
+// T=0.3 was nearly random over the fly's valence range, so it learned the
+// worth of positions to a random player; 0.05 is what made it beat greedy.
+const TRAIN_T = 0.05, DRILLS_PER_GAME = 5, SYNC_EVERY = 10;
 let training = false, trainStats = { games: 0, wins: 0, drills: 0, mates: 0 };
 let matePool = [];
 
@@ -893,6 +906,7 @@ function mateDrill() {
   brain.reinforce(won ? 1 : -0.2, 0, true, won ? WIN_DOPAMINE : 1);
   trainStats.drills++; if (won) trainStats.mates++;
 }
+let seen = 0, watch = false;
 async function trainGame(kind) {
   const g = new Chess(), flyWhite = Math.random() < 0.5;
   brain.startGame();
@@ -905,15 +919,21 @@ async function trainGame(kind) {
       let best = -Infinity; for (const s of sc) best = Math.max(best, s[1]);
       if (pend) {
         const m = material(g, flyWhite);
-        brain.reinforce(Math.tanh((m - lastMat) / 3) * SHAPING, best, false, 1);
+        const d = brain.reinforce(Math.tanh((m - lastMat) / 3) * SHAPING, best, false, 1);
+        if (viewer && watch) viewer.dopamine(d);
         lastMat = m;
       }
       const mv = pickSoftmax(sc, TRAIN_T);
       g.move(mv);
-      brain.evaluate(encode(canonical(g, flyWhite), B), true);
+      const pn = encode(canonical(g, flyWhite), B);
+      brain.evaluate(pn, true);
+      // every few moves, show what it is smelling -- drawing every one would
+      // spend the training time on painting
+      watch = viewer && ++seen % 4 === 0;
+      if (watch) { viewer.think(pn, brain.last, MAX_HZ); paintMbon(); }
       pend = true;
     } else {
-      const m = kind === "greedy" ? greedyMove(g, B) : randomMove(g);
+      const m = opponentMove(kind, g);
       if (!m) break;
       g.move(m);
     }
@@ -926,7 +946,10 @@ async function trainGame(kind) {
   if (result !== 0) r = result > 0 ? 1 : -1;
   else if (g.game_over()) r = DRAW_REWARD;
   else r = Math.tanh((edge - mat0) / 6) * 0.5;   // progress, not position
-  if (pend) brain.reinforce(r, 0, true, result > 0 ? WIN_DOPAMINE : 1);
+  if (pend) {
+    const d = brain.reinforce(r, 0, true, result > 0 ? WIN_DOPAMINE : 1);
+    if (viewer) viewer.dopamine(d * (result > 0 ? WIN_DOPAMINE : 1));
+  }
   if (result > 0) trainStats.wins++;
   return result;
 }

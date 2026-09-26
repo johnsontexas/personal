@@ -11,6 +11,12 @@
  * writes can still lose one. Strong consistency narrows the window, and
  * losing the occasional game's worth of learning is harmless here -- the
  * signal is incremental and noisy by nature.
+ *
+ * `enc` names the encoding the weights were learned under, and weights only
+ * mean something under that encoding. Only the page's current encoding is
+ * accepted (a page cached from before the change gets 409 and keeps learning
+ * on its own copy), and the first contribution under it replaces a brain
+ * stored under an older one instead of being added to it.
  */
 import { getStore } from "@netlify/blobs";
 import type { Config } from "@netlify/functions";
@@ -18,6 +24,7 @@ import type { Config } from "@netlify/functions";
 const KEY = "brain";
 const N_SYN = 62261;          // anything else is not this fly
 const MAX_B64 = 200_000;
+const ENC = "flychess.685.69.threat";   // KEY in /flychess/index.html
 
 function decode(b64: unknown): Buffer | null {
   if (typeof b64 !== "string" || b64.length > MAX_B64) return null;
@@ -51,7 +58,9 @@ export default async (req: Request) => {
   const base = decode(body?.base);
   if (!now || !base) return new Response("bad weights", { status: 400 });
 
-  const cur: any = await store.get(KEY, { type: "json" });
+  if (body?.enc !== ENC) return new Response("different encoding", { status: 409 });
+  let cur: any = await store.get(KEY, { type: "json" });
+  if (cur && cur.enc !== ENC) cur = null;   // the new encoding starts a new fly
   const stored = cur?.w ? decode(cur.w) : null;
 
   let next: Buffer;
@@ -69,10 +78,11 @@ export default async (req: Request) => {
     typeof x === "number" && Number.isFinite(x) ? x : fallback;
 
   await store.setJSON(KEY, {
+    enc: ENC,
     w: next.toString("base64"),
     games: (cur?.games ?? 0) + 1,
     elo: num(body?.elo, cur?.elo ?? null),
-    bench: body?.bench ?? cur?.bench ?? null,
+    bench: body?.bench && typeof body.bench === "object" ? body.bench : cur?.bench ?? null,
     zMean: num(body?.zMean, cur?.zMean ?? null),
     zVar: num(body?.zVar, cur?.zVar ?? null),
     history: Array.isArray(body?.history) ? body.history.slice(-260) : cur?.history ?? [],

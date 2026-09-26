@@ -5,9 +5,12 @@
  * learned weights stop meaning anything, so verify.py checks the two encoders
  * agree on random positions before shipping.
  */
-export const N_PN = 685, N_RES = 165, MAX_HZ = 80.0;
+export const N_PN = 685, N_RES = 69, MAX_HZ = 80.0;
 export const O_MAT = 0, O_BLOCK = 12, O_FILE = 204, O_RANK = 300,
-             O_ATK = 396, O_KING = 428, O_FLAG = 460, O_TERM = 472, O_RES = 520;
+             O_ATK = 396, O_KING = 428, O_FLAG = 460, O_TERM = 472,
+             O_THREAT = 520, O_RES = 616;
+const THREAT_LEVELS = [1, 2, 3, 5, 7, 9];
+const PV = [1, 3, 3, 5, 9, 100];            // what a capture costs; king never
 const PIECE_MAX = [8, 2, 2, 2, 1, 1];
 const VAL = [1, 3, 3, 5, 9, 0];
 const TYPES = ['p', 'n', 'b', 'r', 'q', 'k'];
@@ -115,6 +118,8 @@ export function encode(cb, B) {
 
   const buf = new Int32Array(28);
   const reach = [0, 0];
+  // cheapest attacker of each square, per side (Infinity = unattacked)
+  const cheap = new Float64Array(128).fill(Infinity);
   for (let c = 0; c < 2; c++) {
     const acc = new Float64Array(16);
     let tot = 0;
@@ -122,7 +127,10 @@ export function encode(cb, B) {
       const p = cb.piece[sq];
       if (!p || p.c !== c) continue;
       const n = attacksFrom(sq, p.t, c, occ, buf);
-      for (let i = 0; i < n; i++) { acc[BLOCK[buf[i]]] += 1; tot += 1; }
+      for (let i = 0; i < n; i++) {
+        acc[BLOCK[buf[i]]] += 1; tot += 1;
+        if (PV[p.t] < cheap[c * 64 + buf[i]]) cheap[c * 64 + buf[i]] = PV[p.t];
+      }
     }
     reach[c] = tot;
     for (let b = 0; b < 16; b++) x[O_ATK + c * 16 + b] = Math.min(acc[b] * 0.25, 1.5);
@@ -153,6 +161,26 @@ export function encode(cb, B) {
   } else if (cb.check) {
     for (let i = 0; i < 12; i++) x[O_TERM + 36 + i] = 1;
   }
+  // the labelled line for danger (see encode.py): pieces standing en prise
+  for (let c = 0; c < 2; c++) {
+    const o = O_THREAT + c * 48, foe = 1 - c;
+    let worst = 0;
+    for (let sq = 0; sq < 64; sq++) {
+      const p = cb.piece[sq];
+      if (!p || p.c !== c || p.t === 5) continue;
+      const a = cheap[foe * 64 + sq];
+      if (a === Infinity) continue;
+      const v = PV[p.t];
+      let loss;
+      if (cheap[c * 64 + sq] === Infinity) loss = v;
+      else if (a < v) loss = v - a;
+      else continue;
+      for (let i = 0; i < 6; i++) x[o + p.t * 6 + i] = 1;
+      if (loss > worst) worst = loss;
+    }
+    for (let i = 0; i < 6; i++)
+      if (worst >= THREAT_LEVELS[i]) for (let j = 0; j < 3; j++) x[o + 30 + i * 3 + j] = 1;
+  }
   for (let i = 0; i < N_RES; i++) x[O_RES + i] = 1 / (1 + Math.exp(-res[i]));
 
   for (let i = 0; i < N_PN; i++) x[i] *= MAX_HZ;
@@ -160,7 +188,7 @@ export function encode(cb, B) {
 }
 
 /* ---- the brain (mbchess/brain.py) --------------------------------------- */
-const W_FLOOR = 0.05, W_CEIL = 3.0, GAMMA = 0.97, LAMBDA = 0.7, ADAPT = 1e-4;
+const W_FLOOR = 0.05, W_CEIL = 3.0, GAMMA = 0.97, LAMBDA = 0.7, ADAPT = 1e-4, LR = 0.1, MAX_STEP = 1.0;
 export const WIN_DOPAMINE = 6.0;
 
 export class Brain {
@@ -174,7 +202,7 @@ export class Brain {
     this.mbon = new Float64Array(B.nMbon);
     this.last = null;
     this.dopamine = 0;
-    this.lr = 0.12;
+    this.lr = LR;
   }
 
   evaluate(pn, keep) {
@@ -219,21 +247,26 @@ export class Brain {
     if (!this.last) return 0;
     const B = this.B, { active, act, v } = this.last;
     const dv = (1 - v * v) / this.norm;
+    let g2 = 0;                               // |d valence / d weights|^2
     for (let q = 0; q < active.length; q++) {
       const i = active[q], a = act[q] * dv;
+      g2 += a * a * (B.kmPtr[i + 1] - B.kmPtr[i]);
       for (let e = B.kmPtr[i]; e < B.kmPtr[i + 1]; e++)
         this.trace[e] += a * B.sign[B.kmPost[e]];
     }
     const target = reward + (terminal ? 0 : GAMMA * nextValue);
     const delta = target - v;
     this.dopamine = delta;
-    const step = this.lr * delta * (gain || 1);
+    // normalised (see brain.py): one event moves this position's valence by
+    // about lr * delta, however large the MBONs' summed output has grown; a
+    // win's flood is capped at correcting all of the error, never more
+    const step = Math.min(this.lr * (gain || 1), MAX_STEP) * delta / Math.max(g2, 1e-12);
     const decay = GAMMA * LAMBDA;
     for (let e = 0; e < this.trace.length; e++) {
       const t = this.trace[e];
       if (t === 0) continue;
       let w = B.kmW[e] + step * t;
-      const lo = B.kmW0[e] * W_FLOOR, hi = B.kmW0[e] * W_CEIL;
+      const lo = B.kmA[e] * W_FLOOR, hi = B.kmA[e] * W_CEIL;
       B.kmW[e] = w < lo ? lo : w > hi ? hi : w;
       this.trace[e] = t * decay;
     }
@@ -279,7 +312,7 @@ export function parseBrain(buf) {
   if (magic !== 'FLYCHESS') throw new Error('not a fly brain: ' + magic);
   let o = 8;
   const gi = () => { const v = dv.getInt32(o, true); o += 4; return v; };
-  /* version */ gi();
+  const version = gi();
   const nPn = gi(), nKc = gi(), nMbon = gi(), nActive = gi(),
         nPk = gi(), nKm = gi(), nRes = gi(), resK = gi();
   const eloRaw = gi();                       // -1 when never measured
@@ -301,6 +334,10 @@ export function parseBrain(buf) {
   const resSgn = take(Int8Array, nRes * resK);
   const pst = take(Int16Array, 6 * 64);      // the benchmark opponent's tables
   const pval = take(Float32Array, 6);
+  // the synapses' anatomical strengths: learning is bounded to 5%..300% of
+  // these, as in brain.py. Version 1 files lack them; bound to the shipped
+  // weights instead, as before.
+  const kmA = version >= 2 ? take(Float32Array, nKm) : Float32Array.from(kmW);
 
   // invert the residual projection to a per-feature list (CSR over 768 features)
   const cnt = new Int32Array(769);
@@ -318,7 +355,7 @@ export function parseBrain(buf) {
   }
   return {
     nPn, nKc, nMbon, nActive, zMean, norm, elo: eloRaw < 0 ? null : eloRaw,
-    pkPtr, pkPre, pkW, kmPtr, kmPost, kmW, kmW0: Float32Array.from(kmW),
+    pkPtr, pkPre, pkW, kmPtr, kmPost, kmW, kmW0: Float32Array.from(kmW), kmA,
     sign, kcXY, mbonXY, resPtr, resCh, resSgn: resSg, pst, pval,
   };
 }
@@ -357,6 +394,37 @@ export function greedyMove(game, B) {
     const v = evalBoard(game, color, B);
     game.undo();
     if (v > bv) { bv = v; best = m; }
+  }
+  return best;
+}
+
+/* Negamax with alpha-beta, two plies, captures first: opponents.py's
+   SearchOpponent, so "search2" means the same player in both places. */
+export function searchMove(game, B, depth = 2) {
+  const color = game.turn();
+  let best = null, bv = -1e9;
+  for (const m of ordered(game)) {
+    game.move(m);
+    const v = -negamax(game, depth - 1, -1e9, 1e9, color === 'w' ? 'b' : 'w', B);
+    game.undo();
+    if (v > bv) { bv = v; best = m; }
+  }
+  return best;
+}
+function ordered(game) {
+  const ms = game.moves({ verbose: true });
+  return ms.filter(m => m.captured).concat(ms.filter(m => !m.captured));
+}
+function negamax(game, depth, a, b, color, B) {
+  if (depth === 0 || game.game_over()) return evalBoard(game, color, B);
+  let best = -1e9;
+  for (const m of ordered(game)) {
+    game.move(m);
+    const v = -negamax(game, depth - 1, -b, -a, color === 'w' ? 'b' : 'w', B);
+    game.undo();
+    if (v > best) best = v;
+    if (best > a) a = best;
+    if (a >= b) break;
   }
   return best;
 }
