@@ -3,16 +3,16 @@
 
    page.js reads a few custom properties to draw with. The charts sit on white
    sheets, so --line/--dim/--accent are paper colours; the neuron view sits on a
-   dark plate, so --dot is light. */
+   pale plate, so --dot is a faint ink. */
 :root {
   --line: #e5ded1;
   --dim: #737b83;
   --accent: #8a5a2b;
-  --g0: #4fae9e;            /* odour in */
-  --g1: #d98a3d;            /* central brain */
-  --g2: #c9a227;            /* descending out */
+  --g0: #2f8a7c;            /* odour in */
+  --g1: #b86a26;            /* central brain */
+  --g2: #9c7b12;            /* descending out */
   --c3: #7d67ad; --c4: #b9577a; --c5: #4a86b8; --c6: #6f9440;
-  --dot: rgba(233, 228, 216, .15);
+  --dot: rgba(32, 43, 51, .13);
 }
 
 /* ------------------------------------------------------------ live stage -- */

@@ -32,7 +32,7 @@
 
 <section class="lab-mast">
   <div>
-    <p class="lab-kicker"><a href="/projects.html">Projects</a><span class="sep">/</span>Experiment 02<span class="sep">/</span>September 2026</p>
+    <p class="lab-kicker"><a href="/projects.html">Projects</a><span class="sep">/</span>September 2026</p>
     <h1>AI Fly Brain</h1>
     <p class="lab-dek">A small language model built out of a fruit fly's actual brain. The wiring is
       the fly's and never changes; training only adjusts how strong each synapse is. It runs
@@ -48,8 +48,10 @@
       <div class="livebar" id="livebar"><span class="dot"></span><span id="livetxt">Checking training status…</span></div>
     </div>
   </div>
-  <canvas class="lab-art" data-plate="aiflybrain" data-kind="connectome" data-tone="dark" data-label="A" data-live
-    aria-label="Illustration: neurons and connections with one pathway traced through them"></canvas>
+  <figure>
+    <img class="lab-art" src="/images/Media/aiflybrain-mast.jpg" width="1400" height="1120" alt="The fly’s central brain, seen from the front: every dot is one of its 35,953 neurons at its FlyWire position. Coloured cells fired while it answered “is 8 more than 3?”">
+    <figcaption>The fly’s central brain, seen from the front: every dot is one of its 35,953 neurons at its FlyWire position. Coloured cells fired while it answered “is 8 more than 3?”</figcaption>
+  </figure>
 </section>
 
 <main class="lab-main">
@@ -162,10 +164,9 @@
   <div class="lab-refs">Data: FlyWire connectome (Dorkenwald et al., 2024; Schlegel et al., 2024).
     Neuron model after the whole-brain spiking model of Shiu et al., 2024. Trained with surrogate-gradient
     backpropagation through time. Code available on request.</div>
-  <div><a href="/projects.html">← All projects</a> &nbsp;·&nbsp; <a href="/flychess/">Experiment 01: Fly Chess</a></div>
+  <div><a href="/projects.html">← All projects</a> &nbsp;·&nbsp; <a href="/flychess/">Fly Chess</a></div>
 </footer>
 
-<script type="module" src="/js/plate.js"></script>
 <script type="module" src="/aiflybrain/brain.js"></script>
 <script type="module" src="/aiflybrain/page.js"></script>
 </body>

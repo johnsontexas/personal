@@ -995,8 +995,8 @@ main > h3:first-child {
   margin-bottom: 0.5rem;
 }
 /* ---- The Lab shelf on the projects page ----
-   Cards for the interactive experiments. The cover is a <canvas data-plate>
-   drawn by /js/plate.js; reuse the same markup for future projects. */
+   Cards for the interactive experiments. The cover is an image rendered from the
+   project's own data; reuse the same markup for future projects. */
 .lab-shelf { max-width: 1140px; margin: 3.5rem auto 0; padding: 2.5rem 20px 0; border-top: 1px solid var(--rule); }
 .lab-shelf-head { text-align: center; margin-bottom: 1.75rem; }
 .lab-shelf-head h3 { font-size: clamp(1.6rem, 3vw, 2.1rem); margin: .25rem 0 .5rem; }
@@ -1008,7 +1008,7 @@ main a.lab-card, a.lab-card {
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 a.lab-card:hover { transform: translateY(-3px); box-shadow: 0 16px 34px var(--shadow); border-color: #d3c9b7; }
-.lab-cover { display: block; width: 100%; aspect-ratio: 16 / 9; background: #15181c; }
+.lab-cover { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: #fbfaf6; border-bottom: 1px solid var(--rule); }
 .lab-card-body { padding: 20px 22px 22px; text-align: left; display: flex; flex-direction: column; gap: 6px; flex: 1; }
 .lab-card-body h4 { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; color: var(--primary-color); margin: 0; }
 .lab-card-body p { margin: 4px 0 6px; font-size: 15px; line-height: 1.6; text-align: left; max-width: none; color: var(--text-color); }

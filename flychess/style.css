@@ -32,6 +32,7 @@
 .sq { position: relative; display: grid; place-items: center; cursor: pointer; min-width: 0; }
 .sq.l { background: var(--sq-light); }
 .sq.d { background: var(--sq-dark); }
+.sq .p, #promo button { font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", serif; font-variant-emoji: text; }
 .sq .p { font-size: 9.4cqi; line-height: 1; position: relative; z-index: 3; will-change: transform;
   -webkit-text-stroke: .055em rgba(0, 0, 0, .55); paint-order: stroke fill; }
 .sq.w .p { color: #fbfaf6; text-shadow: 0 .03em .04em rgba(0, 0, 0, .3); }

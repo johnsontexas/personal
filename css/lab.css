@@ -1,18 +1,18 @@
 /* Lab: the shared look for interactive project pages (/flychess, /aiflybrain,
    and whatever comes next). It is the main site's paper, ink and bronze, set
    out like a printed paper: numbered sections, captioned figures, and live
-   instruments shown on dark plates.
+   views drawn like figures in a journal, ink on a pale plate.
 
    Page skeleton:
      body.lab
        header.lab-top            wordmark + site nav
-       section.lab-mast          kicker, title, dek, stat row, plate art
+       section.lab-mast          kicker, title, dek, stat row, figure image
        main.lab-main > section.lab-sec
          .lab-sec-head           <span class="lab-num">01</span><h2>…</h2>
          .panel                  a white sheet on the paper
-         figure.plate            a dark instrument, with figcaption
+         figure.plate            a live view or chart, with figcaption
        footer.lab-foot
-   Generative figures come from /js/plate.js (<canvas data-plate="…">). */
+   Cover and masthead images are rendered from each project's real data. */
 
 :root {
   --paper: #f6f4ef;
@@ -27,11 +27,11 @@
   --bronze-deep: #5f3d1d;
   --bronze-wash: rgba(138, 90, 43, 0.09);
 
-  --plate: #15181c;
-  --plate-2: #1c2025;
-  --plate-rule: #2b3037;
-  --plate-ink: #e9e4d8;
-  --plate-dim: #8b8f94;
+  --plate: #fbfaf6;
+  --plate-2: #f3f0e8;
+  --plate-rule: #e5ded1;
+  --plate-ink: #202b33;
+  --plate-dim: #737b83;
 
   /* signal colours, chosen to read on both paper and plate */
   --sig-in: #4fae9e;
@@ -99,10 +99,12 @@ body.lab {
   width: 100%; aspect-ratio: 5 / 4; display: block; border-radius: 3px;
   border: 1px solid var(--rule); background: var(--sheet);
 }
-.lab-art[data-tone="dark"] { border-color: var(--plate); }
+.lab-art { height: auto; object-fit: cover; }
+.lab-mast figure { margin: 0; }
+.lab-mast figcaption { margin-top: 8px; font-size: 12px; color: var(--muted); }
 
 .lab-stats {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
   margin: 28px 0 0; border-top: 1px solid var(--rule);
 }
 .lab-stats div { padding: 12px 16px 0 0; }
@@ -151,8 +153,8 @@ body.lab {
 /* a dark instrument, captioned like a figure */
 figure.plate { margin: 0; }
 .plate-body {
-  position: relative; background: var(--plate); border-radius: 4px; overflow: hidden;
-  color: var(--plate-ink);
+  position: relative; background: var(--plate); border: 1px solid var(--rule); border-radius: 4px;
+  overflow: hidden; color: var(--plate-ink);
 }
 figure.plate figcaption {
   margin-top: 9px; font-size: 12.5px; line-height: 1.5; color: var(--muted); max-width: 80ch;
